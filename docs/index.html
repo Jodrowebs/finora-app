@@ -682,6 +682,34 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 .ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .3s}
 .ob-dot.active{background:var(--gold);width:18px;border-radius:3px}
 
+/* GOAL CARD */
+.goal-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:18px;margin-bottom:12px}
+.goal-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.goal-add-btn{font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;background:none;border:none;font-family:inherit}
+.goal-item{margin-bottom:14px}.goal-item:last-child{margin:0}
+.goal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.goal-name{font-size:13px;font-weight:600}
+.goal-pct{font-size:11px;font-weight:700;color:var(--gold)}
+.goal-sub{font-size:11px;color:var(--text2);margin-bottom:6px}
+.prog-bar{height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .8s ease}
+.goal-delete{background:none;border:none;cursor:pointer;padding:0;color:var(--text3);font-size:16px;line-height:1;opacity:.6}
+.goal-delete:hover{opacity:1;color:var(--red)}
+
+/* PROFILE EDIT MODAL */
+#profile-edit-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
+#profile-edit-modal.on{display:flex}
+.tx-delete-btn{background:none;border:none;padding:6px;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .2s}
+.tx-item:hover .tx-delete-btn{opacity:1}
+@media (hover:none){.tx-delete-btn{opacity:.45}}
+.tx-item{position:relative}
+
+/* FINANZAS SUMMARY */
+.fin-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.fin-sum-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:12px 14px;box-shadow:var(--shadow)}
+.fin-sum-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px}
+.fin-sum-val{font-size:20px;font-weight:800;letter-spacing:-.6px}
+
 /* LEGAL MODAL */
 #legal-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
 #legal-modal.on{display:flex}
@@ -940,6 +968,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
           <div id="pred-rows"></div>
         </div>
 
+        <!-- Goals -->
+        <div class="goal-card" id="goals-card" style="display:none">
+          <div class="goal-card-head">
+            <div class="card-title">Mis objetivos</div>
+            <button class="goal-add-btn" onclick="openGoalModal()">+ Añadir</button>
+          </div>
+          <div id="goals-list"></div>
+        </div>
+
         <!-- Recent transactions -->
         <div class="card card-pad">
           <div class="card-head"><div class="card-title">Movimientos recientes</div><span class="card-link" onclick="goTo('finanzas')">Ver todos</span></div>
@@ -1046,6 +1083,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
       <!-- FINANZAS -->
       <div class="sec" id="sec-finanzas">
         <div class="sec-head"><h2>Mis Finanzas</h2><p>Control de tus movimientos</p></div>
+        <div class="fin-summary">
+          <div class="fin-sum-card"><div class="fin-sum-label">Ingresos registrados</div><div class="fin-sum-val pos" id="fin-sum-in">0 €</div></div>
+          <div class="fin-sum-card"><div class="fin-sum-label">Gastos registrados</div><div class="fin-sum-val neg" id="fin-sum-out">0 €</div></div>
+        </div>
         <div class="card card-pad" id="tx-card">
           <div class="card-head"><div class="card-title">Movimientos</div><span id="tx-limit-tag" class="card-link" style="font-size:11px;color:var(--text2)"></span></div>
           <div id="tx-list"><div style="font-size:13px;color:var(--text2);text-align:center;padding:20px 0">Aún no hay movimientos.</div></div>
@@ -1292,11 +1333,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
           <div class="profile-avatar" id="prof-avatar">--</div>
           <div class="profile-name" id="prof-name">-</div>
           <div class="profile-email" id="prof-email">-</div>
-          <div class="plan-chip" id="prof-plan-chip" style="display:inline-flex;margin:0 auto">Plan Gratuito</div>
+          <div class="plan-chip" id="prof-plan-chip" style="display:inline-flex;margin:0 auto 16px">Plan Gratuito</div>
+          <button onclick="openProfileEdit()" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)">Editar perfil</button>
         </div>
-        <div class="card" style="margin-bottom:12px" onclick="goTo('planes')">
+        <div id="prof-upgrade-card" class="card" style="margin-bottom:12px;cursor:pointer" onclick="goTo('planes')">
           <div style="padding:16px;display:flex;align-items:center;gap:12px">
-            <div style="flex:1"><div style="font-size:14px;font-weight:600">Mejorar plan</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Pro desde 9 €/mes · IA ilimitada</div></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600" id="prof-upgrade-title">Mejorar plan</div><div style="font-size:12px;color:var(--text2);margin-top:2px" id="prof-upgrade-sub">Pro desde 9 €/mes · IA ilimitada</div></div>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"><path d="M6 3l5 5-5 5"/></svg>
           </div>
         </div>
@@ -1390,7 +1432,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
     <select class="form-input" id="inp-cat">
       <option>Servicios profesionales</option><option>Alimentación</option><option>Transporte</option>
       <option>Software</option><option>Salud</option><option>Ocio</option>
-      <option>Formación</option><option>Gestoría</option><option>Otros</option>
+      <option>Formación</option><option>Gestoría</option><option>Vivienda</option>
+      <option>Ropa</option><option>Suscripciones</option><option>Restaurantes</option>
+      <option>Viajes</option><option>Seguros</option><option>Inversión</option><option>Otros</option>
     </select>
     <button class="btn-save" onclick="saveTransaction()">Guardar</button>
   </div>
@@ -1426,6 +1470,43 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- PROFILE EDIT MODAL -->
+<div id="profile-edit-modal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Editar perfil</div>
+    <label class="form-label">Nombre</label>
+    <input class="form-input" id="edit-name" placeholder="Tu nombre" autocomplete="given-name">
+    <label class="form-label">Ingresos mensuales (€)</label>
+    <input class="form-input" id="edit-income" type="number" inputmode="numeric" placeholder="Ej: 2500">
+    <label class="form-label">Gastos mensuales (€)</label>
+    <input class="form-input" id="edit-expenses" type="number" inputmode="numeric" placeholder="Ej: 1500">
+    <label class="form-label">Situación laboral</label>
+    <div class="type-toggle">
+      <button class="type-btn" id="edit-mode-autonomo" onclick="setEditMode('autonomo')">Autónomo</button>
+      <button class="type-btn" id="edit-mode-empleado" onclick="setEditMode('empleado')">Empleado</button>
+      <button class="type-btn" id="edit-mode-pareja" onclick="setEditMode('pareja')">Pareja</button>
+    </div>
+    <button class="btn-save" onclick="saveProfileEdit()">Guardar cambios</button>
+    <button class="btn-outline" onclick="document.getElementById('profile-edit-modal').classList.remove('on')">Cancelar</button>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="modal" id="goal-modal" onclick="if(event.target===this)closeGoalModal()">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Nuevo objetivo</div>
+    <label class="form-label">Nombre del objetivo</label>
+    <input class="form-input" id="goal-name-inp" placeholder="Ej: Fondo de emergencia, Vacaciones...">
+    <label class="form-label">Meta (€)</label>
+    <input class="form-input" id="goal-target-inp" type="number" inputmode="decimal" placeholder="Ej: 3000">
+    <label class="form-label">Ahorrado hasta ahora (€)</label>
+    <input class="form-input" id="goal-saved-inp" type="number" inputmode="decimal" placeholder="0">
+    <button class="btn-save" onclick="saveGoal()">Guardar objetivo</button>
+  </div>
+</div>
 
 <!-- LEGAL MODAL -->
 <div id="legal-modal" onclick="if(event.target===this)this.classList.remove('on')">
@@ -1654,8 +1735,22 @@ async function doLogin(){
   if(!valid) return
 
   const btn = document.getElementById('btn-login')
-  btn.textContent = 'Entrando...'
   btn.disabled = true
+
+  // Password recovery mode
+  if(window._recoveryMode && sb){
+    btn.textContent = 'Actualizando...'
+    if(!pass || pass.length < 6){ authFieldError('err-login-pass','Mínimo 6 caracteres'); btn.disabled=false; btn.textContent='Entrar'; return }
+    const { error } = await sb.auth.updateUser({ password: pass })
+    btn.disabled = false
+    btn.textContent = 'Entrar'
+    if(error){ authShowError('login-error', 'Error: ' + error.message); return }
+    window._recoveryMode = false
+    document.getElementById('login-success').textContent = '✓ Contraseña actualizada. Inicia sesión con tu nueva contraseña.'
+    return
+  }
+
+  btn.textContent = 'Entrando...'
 
   try {
     if(sb){
@@ -1865,10 +1960,24 @@ function initDashboard(){
   document.getElementById('prof-plan-chip').textContent = planInfo.name
   document.getElementById('prof-plan-chip').className = 'plan-chip ' + planInfo.chipClass
 
-  document.getElementById('st-income').textContent = income.toLocaleString('es-ES') + ' €'
-  document.getElementById('st-expenses').textContent = expenses.toLocaleString('es-ES') + ' €'
-  document.getElementById('st-benefit').textContent = benefit.toLocaleString('es-ES') + ' €'
-  document.getElementById('st-savrate').textContent = savRate + '%'
+  // Stat cards: actual transaction totals for current month
+  const nowD = new Date()
+  const isCurMonth = t => {
+    if(t.created_at){ const d=new Date(t.created_at); return d.getFullYear()===nowD.getFullYear()&&d.getMonth()===nowD.getMonth() }
+    if(typeof t.id==='number'){ const d=new Date(t.id); return d.getFullYear()===nowD.getFullYear()&&d.getMonth()===nowD.getMonth() }
+    return true
+  }
+  const thisMoTx = transactions.filter(isCurMonth)
+  const txIncome   = thisMoTx.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const txExpenses = thisMoTx.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const txBenefit  = txIncome - txExpenses
+  const txSavRate  = txIncome > 0 ? Math.round((txBenefit/txIncome)*100) : 0
+  document.getElementById('st-income').textContent = txIncome.toLocaleString('es-ES') + ' €'
+  document.getElementById('st-expenses').textContent = txExpenses.toLocaleString('es-ES') + ' €'
+  document.getElementById('st-benefit').textContent = txBenefit.toLocaleString('es-ES') + ' €'
+  document.getElementById('st-benefit').className = 'stat-value ' + (txBenefit >= 0 ? 'pos' : 'neg')
+  document.getElementById('st-savrate').textContent = txSavRate + '%'
+  document.getElementById('st-savrate').className = 'stat-value ' + (txSavRate >= 20 ? 'pos' : txSavRate >= 10 ? 'warn' : 'neg')
 
   // Mensaje inicio inteligente con datos reales
   const gastosTx = transactions.filter(t=>t.type==='gasto')
@@ -1888,7 +1997,7 @@ function initDashboard(){
     if(topCat) aiMsg += `, siendo <strong>${topCat[0]}</strong> tu categoría principal (${topCat[1].toLocaleString('es-ES')} €)`
     aiMsg += `. Tasa de ahorro: <strong>${savRate}%</strong>.`
   }
-  const freeNote = !isPro() ? `<br><br><span style="font-size:11px;color:#6b7280">${getAiRemaining()} preguntas hoy · <span style="color:var(--gold);cursor:pointer;font-weight:600" onclick="goTo('planes')">Mejorar plan</span></span>` : ''
+  const freeNote = !isPro() ? `<br><br><span style="font-size:11px;color:#6b7280">${getAiRemaining()} consultas este mes · <span style="color:var(--gold);cursor:pointer;font-weight:600" onclick="goTo('planes')">Mejorar plan</span></span>` : ''
   document.getElementById('home-ai-bubble').innerHTML = aiMsg + freeNote
 
   // Fiscal: bloqueo para free, datos reales para Pro+
@@ -1918,6 +2027,28 @@ function initDashboard(){
     document.getElementById('fiscal-empleado').style.display = 'none'
   }
 
+  // Dynamic fiscal deadline
+  document.getElementById('fiscal-next-deadline').textContent = getNextFiscalDeadline()
+
+  // Profile upgrade card adaptation
+  const upgradeCard = document.getElementById('prof-upgrade-card')
+  const upgradeTitle = document.getElementById('prof-upgrade-title')
+  const upgradeSub   = document.getElementById('prof-upgrade-sub')
+  if(upgradeCard){
+    if(isFinanciero()){
+      upgradeCard.style.display = 'none'
+    } else if(isPro()){
+      upgradeCard.style.display = ''
+      upgradeTitle.textContent = 'Subir a Autónomos+'
+      upgradeSub.textContent   = 'Gestión fiscal completa · IVA, IRPF, escáner facturas'
+    } else {
+      upgradeCard.style.display = ''
+      upgradeTitle.textContent = 'Mejorar plan'
+      upgradeSub.textContent   = 'Pro desde 9 €/mes · IA ilimitada'
+    }
+  }
+
+  renderGoals()
   renderTxList()
   renderHealthScore()
   generateSmartAlerts()
@@ -1950,7 +2081,16 @@ function renderTxList(){
       <div class="tx-icon ${t.type}">${t.type==='ingreso'?svgIn:svgOut}</div>
       <div class="tx-info"><div class="tx-name">${t.description||t.desc||'Sin descripción'}</div><div class="tx-cat">${t.cat} · ${t.date}</div></div>
       <div class="tx-amount ${t.type==='ingreso'?'pos':'neg'}">${t.type==='ingreso'?'+':'−'}${parseFloat(t.amount).toLocaleString('es-ES')} €</div>
+      <button class="tx-delete-btn" onclick="deleteTransaction(${JSON.stringify(t.id)})">×</button>
     </div>`
+
+  // Update finanzas summary
+  const totalIn  = all.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalOut = all.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const finIn  = document.getElementById('fin-sum-in')
+  const finOut = document.getElementById('fin-sum-out')
+  if(finIn)  finIn.textContent  = totalIn.toLocaleString('es-ES') + ' €'
+  if(finOut) finOut.textContent = totalOut.toLocaleString('es-ES') + ' €'
 
   // Inicio: últimos 4
   listHome.innerHTML = all.slice(0,4).map(makeTx).join('')
@@ -2125,7 +2265,8 @@ async function saveTransaction(){
   if(!amount || amount <= 0){ showToast('Introduce una cantidad válida'); return }
 
   const today = new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'})
-  const tx = { type:txType, amount, desc, cat, date:today, id:Date.now() }
+  const ts = Date.now()
+  const tx = { type:txType, amount, desc, cat, date:today, id:ts, ts }
 
   if(sb && user?.id){
     const { data, error } = await sb.from('transactions').insert({
@@ -2434,6 +2575,135 @@ function showToast(msg){
   toastTimer = setTimeout(()=>t.classList.remove('on'), 2500)
 }
 
+// ─── PROFILE EDIT ─────────────────────────────────────────
+let editMode = 'autonomo'
+function openProfileEdit(){
+  document.getElementById('edit-name').value = user.name || ''
+  document.getElementById('edit-income').value = user.income || ''
+  document.getElementById('edit-expenses').value = user.expenses || ''
+  editMode = user.mode || 'autonomo'
+  ;['autonomo','empleado','pareja'].forEach(m=>{
+    document.getElementById('edit-mode-'+m).className = 'type-btn'+(m===editMode?' active':'')
+  })
+  document.getElementById('profile-edit-modal').classList.add('on')
+}
+function setEditMode(m){
+  editMode = m
+  ;['autonomo','empleado','pareja'].forEach(id=>{
+    document.getElementById('edit-mode-'+id).className = 'type-btn'+(id===m?' active':'')
+  })
+}
+async function saveProfileEdit(){
+  const name     = document.getElementById('edit-name').value.trim()
+  const income   = parseFloat(document.getElementById('edit-income').value) || 0
+  const expenses = parseFloat(document.getElementById('edit-expenses').value) || 0
+  if(!name){ showToast('Introduce tu nombre'); return }
+  user.name = name
+  user.income = income
+  user.expenses = expenses
+  user.mode = editMode
+  await saveUser()
+  document.getElementById('profile-edit-modal').classList.remove('on')
+  initDashboard()
+  showToast('Perfil actualizado')
+}
+
+// ─── GOALS ────────────────────────────────────────────────
+function getGoals(){ return JSON.parse(localStorage.getItem('pec_goals')||'[]') }
+function saveGoals(g){ localStorage.setItem('pec_goals', JSON.stringify(g)) }
+
+function openGoalModal(){
+  document.getElementById('goal-name-inp').value = ''
+  document.getElementById('goal-target-inp').value = ''
+  document.getElementById('goal-saved-inp').value = ''
+  document.getElementById('goal-modal').classList.add('on')
+}
+function closeGoalModal(){ document.getElementById('goal-modal').classList.remove('on') }
+
+function saveGoal(){
+  const name   = document.getElementById('goal-name-inp').value.trim()
+  const target = parseFloat(document.getElementById('goal-target-inp').value) || 0
+  const saved  = parseFloat(document.getElementById('goal-saved-inp').value) || 0
+  if(!name || target <= 0){ showToast('Rellena nombre y meta'); return }
+  const goals = getGoals()
+  goals.push({ id: Date.now(), name, target, saved })
+  saveGoals(goals)
+  closeGoalModal()
+  renderGoals()
+  showToast('Objetivo guardado')
+}
+
+function deleteGoal(id){
+  const goals = getGoals().filter(g=>g.id !== id)
+  saveGoals(goals)
+  renderGoals()
+  showToast('Objetivo eliminado')
+}
+
+function renderGoals(){
+  const goals = getGoals()
+  const card = document.getElementById('goals-card')
+  const list = document.getElementById('goals-list')
+  if(!card || !list) return
+  if(!goals.length){ card.style.display='none'; return }
+  card.style.display='block'
+  list.innerHTML = goals.map(g=>{
+    const pct = Math.min(100, Math.round((g.saved/g.target)*100))
+    const left = Math.max(0, g.target - g.saved)
+    return `<div class="goal-item">
+      <div class="goal-header">
+        <div class="goal-name">${g.name}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="goal-pct">${pct}%</div>
+          <button class="goal-delete" onclick="deleteGoal(${g.id})">×</button>
+        </div>
+      </div>
+      <div class="goal-sub">${g.saved.toLocaleString('es-ES')} € de ${g.target.toLocaleString('es-ES')} € · Faltan ${left.toLocaleString('es-ES')} €</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>`
+  }).join('')
+}
+
+// ─── DELETE TRANSACTION ───────────────────────────────────
+async function deleteTransaction(id){
+  if(!confirm('¿Eliminar este movimiento?')) return
+  if(sb && user?.id){
+    await sb.from('transactions').delete().eq('id', id)
+  }
+  transactions = transactions.filter(t=>t.id !== id)
+  if(!sb) saveTx()
+  renderTxList()
+  renderHealthScore()
+  generateSmartAlerts()
+  renderCategoryChart()
+  renderPrediction()
+  renderInsights()
+  showToast('Movimiento eliminado')
+}
+
+// ─── FISCAL DEADLINE ──────────────────────────────────────
+function getNextFiscalDeadline(){
+  const now = new Date()
+  const m = now.getMonth() // 0-indexed
+  const d = now.getDate()
+  const y = now.getFullYear()
+  // Presentación trimestral: 20 abril, 20 julio, 20 octubre, 20 enero
+  const deadlines = [
+    { month:3,  day:20, label:'Modelo 303 Q1 (IVA)', year:y },
+    { month:6,  day:20, label:'Modelo 303 Q2 (IVA)', year:y },
+    { month:9,  day:20, label:'Modelo 303 Q3 (IVA)', year:y },
+    { month:0,  day:20, label:'Modelo 303 Q4 (IVA)', year:y+1 }
+  ]
+  const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+  for(const dl of deadlines){
+    const dlDate = new Date(dl.year, dl.month, dl.day)
+    if(dlDate >= now){
+      return `${dl.label} · ${dl.day} ${monthNames[dl.month]} ${dl.year}`
+    }
+  }
+  return 'Modelo 303 Q4 · 20 enero ' + (y+1)
+}
+
 // ─── INIT ─────────────────────────────────────────────────
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{})
 
@@ -2448,6 +2718,17 @@ if(sb){
         transactions = txData || []
         enterApp()
       }
+    }
+    if(event === 'PASSWORD_RECOVERY'){
+      // Show password update UI
+      document.getElementById('auth-screen').classList.add('on')
+      document.getElementById('app').style.display = 'none'
+      switchTab('login')
+      document.getElementById('login-success').textContent = 'Introduce tu nueva contraseña abajo y pulsa Entrar para actualizarla.'
+      document.getElementById('login-success').classList.add('on')
+      document.getElementById('login-pass').focus()
+      // Override doLogin to update password instead
+      window._recoveryMode = true
     }
   })
 }
