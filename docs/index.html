@@ -2056,8 +2056,34 @@ function initDashboard(){
   renderPrediction()
   renderInsights()
 
-  document.getElementById('chat-msgs').innerHTML = `<div class="bubble ai">Hola <strong>${user.name.split(' ')[0]}</strong>. Soy Pecunia, tu asesor financiero con IA.<br><br>Tienes ingresos de <strong>${income.toLocaleString('es-ES')} €/mes</strong> y una tasa de ahorro del <strong>${savRate}%</strong>. ¿En qué te puedo ayudar hoy?</div>`
+  // Chat welcome personalizado
+  const savRate2 = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
+  const gastos2 = transactions.filter(t=>t.type==='gasto')
+  const catTotals2 = {}
+  gastos2.forEach(t=>{ catTotals2[t.cat]=(catTotals2[t.cat]||0)+parseFloat(t.amount) })
+  const topCat2 = Object.entries(catTotals2).sort((a,b)=>b[1]-a[1])[0]
+  const hs = calcHealthScore()
+
+  let welcomeMsg = `Hola **${user.name.split(' ')[0]}**. Soy tu asistente financiero personal.\n\n`
+  if(transactions.length === 0){
+    welcomeMsg += `Veo que acabas de empezar. Aquí va mi primer análisis con tus datos declarados:\n\n• Ingresos: **${income.toLocaleString('es-ES')} €/mes**\n• Gastos declarados: **${expenses.toLocaleString('es-ES')} €/mes**\n• Beneficio neto: **${(income-expenses).toLocaleString('es-ES')} €/mes** (tasa ahorro: **${savRate2}%**)\n\n${savRate2 < 20 ? `⚠️ Tu tasa de ahorro está ${savRate2 < 10 ? 'muy por' : 'por'} debajo del 20% recomendado. Hay margen de mejora.` : `✅ Tu tasa de ahorro del ${savRate2}% es buena. Podemos optimizarla aún más.`}\n\nEmpieza añadiendo tus movimientos reales para que pueda darte un análisis mucho más preciso. ¿Por qué no me preguntas algo?`
+  } else {
+    welcomeMsg += `Resumen actual de tu situación:\n\n• Salud financiera: **${hs}/100**\n• Tasa de ahorro: **${savRate2}%** ${savRate2 >= 20 ? '✅' : '⚠️'}\n• ${transactions.length} movimientos registrados`
+    if(topCat2) welcomeMsg += `\n• Mayor gasto: **${topCat2[0]}** (${topCat2[1].toLocaleString('es-ES')} €)`
+    if(user.mode === 'autonomo'){
+      const ivaEst = Math.round(income * 3 * 0.21)
+      welcomeMsg += `\n• IVA trimestral estimado: **${ivaEst.toLocaleString('es-ES')} €** — próximo vencimiento: **${getNextFiscalDeadline().split('·')[1]?.trim() || '20 julio'}**`
+    }
+    welcomeMsg += `\n\n¿Qué quieres analizar hoy?`
+  }
+
+  const welcomeEl = document.getElementById('chat-welcome')
+  if(welcomeEl) welcomeEl.innerHTML = renderMarkdown(welcomeMsg)
+  else {
+    document.getElementById('chat-msgs').innerHTML = `<div class="bubble ai" id="chat-welcome">${renderMarkdown(welcomeMsg)}</div>`
+  }
   chatHistory.length = 0
+  renderChatSuggestions()
 }
 
 function renderTxList(){
@@ -2133,53 +2159,256 @@ function buildSystemPrompt(){
   if(!user) return 'Eres Pecunia, un asesor financiero personal para España.'
   const now = new Date()
   const year = now.getFullYear()
-  const month = now.toLocaleDateString('es-ES',{month:'long'})
-  const benefit = user.income - user.expenses
-  const savRate = user.income>0 ? Math.round((benefit/user.income)*100) : 0
-  const modeStr = {autonomo:'autónomo/a',empleado:'empleado/a por cuenta ajena',pareja:'en pareja'}[user.mode]||user.mode
+  const monthName = now.toLocaleDateString('es-ES',{month:'long'})
+  const dayOfMonth = now.getDate()
+  const daysInMonth = new Date(year, now.getMonth()+1, 0).getDate()
 
-  const gastos = transactions.filter(t=>t.type==='gasto')
-  const ingresos = transactions.filter(t=>t.type==='ingreso')
-  const totalGastos = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
-  const totalIngresos = ingresos.reduce((s,t)=>s+parseFloat(t.amount),0)
-  const catTotals = {}
-  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
-  const catStr = Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`${c}: ${v.toLocaleString('es-ES')} €`).join(', ')
-  const recentTx = transactions.slice(-5).map(t=>`${t.type==='ingreso'?'+':'-'}${parseFloat(t.amount).toLocaleString('es-ES')} € (${t.cat||''}: ${t.description||t.desc||''})`).join('\n')
+  const income   = user.income   || 0
+  const expenses = user.expenses || 0
+  const benefit  = income - expenses
+  const savRate  = income > 0 ? Math.round((benefit/income)*100) : 0
+  const modeStr  = {autonomo:'autónomo/a',empleado:'empleado/a por cuenta ajena',pareja:'en pareja (economía conjunta)'}[user.mode] || user.mode
   const healthScore = calcHealthScore()
 
-  return `Eres Pecunia, un asesor financiero personal con IA especializado en España. Eres experto en fiscalidad española (IVA, IRPF, modelos trimestrales), ahorro, inversión y planificación financiera personal.
+  // Transaction analysis
+  const gastos   = transactions.filter(t=>t.type==='gasto')
+  const ingresos = transactions.filter(t=>t.type==='ingreso')
+  const totalGastos   = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalIngresos = ingresos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const netTx = totalIngresos - totalGastos
 
-Fecha actual: ${month} de ${year}. Año fiscal: ${year}.
+  // Category breakdown
+  const catTotals = {}
+  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const catSorted = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])
+  const catStr = catSorted.map(([c,v])=>`  • ${c}: ${v.toLocaleString('es-ES')} € (${totalGastos>0?Math.round(v/totalGastos*100):0}%)`).join('\n') || '  (sin datos)'
 
-PERFIL DEL USUARIO:
-- Nombre: ${user.name}
+  // All transactions detail
+  const allTxStr = transactions.slice(0,30).map(t=>`  ${t.type==='ingreso'?'+':`-`}${parseFloat(t.amount).toLocaleString('es-ES')} € | ${t.cat} | ${t.description||t.desc||''} | ${t.date}`).join('\n') || '  (ninguno)'
+
+  // Subscription detection (same category, multiple gastos)
+  const possibleSubs = []
+  const subCats = ['Suscripciones','Software']
+  gastos.forEach(t=>{ if(subCats.includes(t.cat)) possibleSubs.push(`${t.description||t.desc||t.cat} (${parseFloat(t.amount).toLocaleString('es-ES')} €)`) })
+  const subsStr = possibleSubs.length ? possibleSubs.join(', ') : 'ninguna detectada'
+
+  // Emergency fund
+  const monthlyExpenses = expenses || (totalGastos / Math.max(1, transactions.length/3))
+  const emergencyFundNeeded = monthlyExpenses * 6
+  const emergencyFundMin   = monthlyExpenses * 3
+
+  // Cash flow projection (based on current month tx)
+  const ratio = dayOfMonth / daysInMonth
+  const gastosActualesMes = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const proyeccionMes = ratio > 0 ? Math.round(gastosActualesMes / ratio) : expenses
+
+  // Tax calculations (autónomo)
+  let taxSection = ''
+  if(user.mode === 'autonomo'){
+    const ivaTrimestrall = Math.round(income * 3 * 0.21)
+    const ivaAnual = Math.round(income * 12 * 0.21)
+    const irpfAnual = (() => {
+      const base = income * 12
+      if(base <= 12450)  return Math.round(base * 0.19)
+      if(base <= 20200)  return Math.round(12450*0.19 + (base-12450)*0.24)
+      if(base <= 35200)  return Math.round(12450*0.19 + 7750*0.24 + (base-20200)*0.30)
+      if(base <= 60000)  return Math.round(12450*0.19 + 7750*0.24 + 15000*0.30 + (base-35200)*0.37)
+      if(base <= 300000) return Math.round(12450*0.19 + 7750*0.24 + 15000*0.30 + 24800*0.37 + (base-60000)*0.45)
+      return Math.round(12450*0.19 + 7750*0.24 + 15000*0.30 + 24800*0.37 + 240000*0.45 + (base-300000)*0.47)
+    })()
+    const irpfMensual = Math.round(irpfAnual/12)
+    const retenciones = Math.round(income * 0.15)
+    const nextDeadline = getNextFiscalDeadline()
+    taxSection = `
+SITUACIÓN FISCAL (autónomo):
+- IVA 21% a ingresar este trimestre: ${ivaTrimestrall.toLocaleString('es-ES')} € (estimado sobre ingresos declarados)
+- IRPF anual estimado (tramos ${year}): ${irpfAnual.toLocaleString('es-ES')} € → ${irpfMensual.toLocaleString('es-ES')} €/mes
+- Retención recomendada en facturas (15%): ${retenciones.toLocaleString('es-ES')} €/mes
+- Reserva mensual recomendada (IVA+IRPF): ${Math.round(income*0.21 + irpfMensual).toLocaleString('es-ES')} €
+- Próximo vencimiento: ${nextDeadline}
+- Gastos 100% deducibles: cuota autónomos SS, software/herramientas, gestoría, material oficina, formación profesional
+- Gastos 50% deducibles: teléfono, internet, vehículo (uso mixto)
+- Modelos trimestrales: 303 (IVA), 130 (IRPF pago fraccionado), 111 (retenciones IRPF si aplica)`
+  } else if(user.mode === 'empleado'){
+    const irpfAnual = (() => {
+      const base = income * 12
+      if(base <= 12450)  return Math.round(base * 0.19)
+      if(base <= 20200)  return Math.round(12450*0.19 + (base-12450)*0.24)
+      if(base <= 35200)  return Math.round(12450*0.19 + 7750*0.24 + (base-20200)*0.30)
+      if(base <= 60000)  return Math.round(12450*0.19 + 7750*0.24 + 15000*0.30 + (base-35200)*0.37)
+      return Math.round(12450*0.19 + 7750*0.24 + 15000*0.30 + 24800*0.37 + (base-60000)*0.45)
+    })()
+    taxSection = `
+SITUACIÓN FISCAL (empleado):
+- IRPF anual estimado: ${irpfAnual.toLocaleString('es-ES')} €
+- El IRPF se retiene en nómina. Declaración Renta (Modelo 100): abril-junio del año siguiente.
+- Si ingresos < 22.000 € de un pagador, puede estar exento de declarar.
+- Deducciones clave: plan de pensiones (hasta 1.500 €/año), vivienda habitual (si hipoteca pre-2013), donativos.`
+  }
+
+  // 50/30/20 Rule
+  const necesidades    = Math.round(income * 0.50)
+  const deseos         = Math.round(income * 0.30)
+  const ahorroinversion = Math.round(income * 0.20)
+
+  // Goals
+  const goals = JSON.parse(localStorage.getItem('pec_goals')||'[]')
+  const goalsStr = goals.length ? goals.map(g=>`  • ${g.name}: ${g.saved.toLocaleString('es-ES')} € / ${g.target.toLocaleString('es-ES')} € (${Math.round(g.saved/g.target*100)}%)`).join('\n') : '  (sin objetivos definidos)'
+
+  return `Eres Pecunia, el asistente financiero personal de ${user.name}. Actúas como un gestor financiero experto, analítico, cercano y muy directo. Tu objetivo es ayudar a ${user.name} a mejorar su situación financiera con análisis concretos, recomendaciones accionables y conocimiento profundo de la fiscalidad y el sistema financiero español.
+
+FECHA Y CONTEXTO:
+- Hoy: ${dayOfMonth} de ${monthName} de ${year} (día ${dayOfMonth} de ${daysInMonth} del mes)
+- Año fiscal activo: ${year}
+
+═══════════════════════════════════════
+PERFIL FINANCIERO DE ${user.name.toUpperCase()}
+═══════════════════════════════════════
 - Situación laboral: ${modeStr}
-- Objetivo: ${user.objetivo || 'no especificado'}
-- Ingresos mensuales declarados: ${user.income.toLocaleString('es-ES')} €/mes
-- Gastos mensuales declarados: ${user.expenses.toLocaleString('es-ES')} €/mes
+- Objetivo principal: ${user.objetivo || 'no especificado (pregúntale si es relevante)'}
+- Edad estimada: ${user.edad || 'no especificada'}
+- Puntuación salud financiera Pecunia: ${healthScore}/100
+
+FLUJO MENSUAL (declarado):
+- Ingresos netos: ${income.toLocaleString('es-ES')} €/mes
+- Gastos declarados: ${expenses.toLocaleString('es-ES')} €/mes
 - Beneficio neto: ${benefit.toLocaleString('es-ES')} €/mes
-- Tasa de ahorro: ${savRate}%
-- Puntuación salud financiera: ${healthScore}/100
+- Tasa de ahorro actual: ${savRate}% (objetivo recomendado: mínimo 20%)
+- Estado: ${savRate >= 20 ? '✅ Por encima del objetivo' : savRate >= 10 ? '⚠️ Por debajo del 20% recomendado' : '🔴 Tasa de ahorro muy baja — acción urgente'}
 
-MOVIMIENTOS REGISTRADOS (${transactions.length} en total):
-- Total ingresos registrados: ${totalIngresos.toLocaleString('es-ES')} €
-- Total gastos registrados: ${totalGastos.toLocaleString('es-ES')} €
-- Gastos por categoría: ${catStr || 'sin datos aún'}
-- Últimos movimientos:\n${recentTx || 'ninguno aún'}
+REGLA 50/30/20 APLICADA A ${user.name.split(' ')[0]}:
+- 50% necesidades: ${necesidades.toLocaleString('es-ES')} €/mes
+- 30% deseos/ocio: ${deseos.toLocaleString('es-ES')} €/mes
+- 20% ahorro/inversión: ${ahorroinversion.toLocaleString('es-ES')} €/mes (actualmente ahorra ${benefit.toLocaleString('es-ES')} €)
 
-INSTRUCCIONES:
-- Responde SIEMPRE en español, de forma clara, directa y MUY personalizada usando los datos reales del usuario.
-- Si tienes datos de transacciones, cítalos específicamente (ej: "has gastado X € en Ocio este mes").
-- Nunca respondas de forma genérica si tienes datos suficientes.
-- Máximo 5-6 líneas salvo que pidan más detalle.
-- Para consejos fiscales añade siempre: "Consulta con tu gestor fiscal antes de aplicarlo."
-- Si el usuario no tiene datos, anímale a añadir movimientos para un análisis más preciso.`
+FONDO DE EMERGENCIA:
+- Recomendado mínimo (3 meses): ${emergencyFundMin.toLocaleString('es-ES')} €
+- Recomendado óptimo (6 meses): ${emergencyFundNeeded.toLocaleString('es-ES')} €
+- Estado: ${benefit > 0 ? `Si ahorra todo el beneficio, lo alcanza en ${Math.ceil(emergencyFundNeeded/benefit)} meses` : 'Con gasto mayor que ingreso, es urgente reducir gastos primero'}
+
+PROYECCIÓN MES ACTUAL:
+- Días transcurridos: ${dayOfMonth}/${daysInMonth}
+- Gastos actuales en tx: ${gastosActualesMes.toLocaleString('es-ES')} €
+- Proyección a fin de mes: ${proyeccionMes.toLocaleString('es-ES')} €
+- Ahorro previsto este mes: ${(income - proyeccionMes).toLocaleString('es-ES')} €
+${taxSection}
+
+═══════════════════════════════════════
+MOVIMIENTOS REGISTRADOS (${transactions.length} total)
+═══════════════════════════════════════
+Total ingresos registrados: +${totalIngresos.toLocaleString('es-ES')} €
+Total gastos registrados: -${totalGastos.toLocaleString('es-ES')} €
+Resultado neto en registro: ${netTx >= 0 ? '+' : ''}${netTx.toLocaleString('es-ES')} €
+
+DESGLOSE POR CATEGORÍA (gastos):
+${catStr}
+
+POSIBLES SUSCRIPCIONES DETECTADAS: ${subsStr}
+
+TODOS LOS MOVIMIENTOS REGISTRADOS:
+${allTxStr}
+
+OBJETIVOS FINANCIEROS:
+${goalsStr}
+
+═══════════════════════════════════════
+INSTRUCCIONES DE COMPORTAMIENTO
+═══════════════════════════════════════
+PERSONALIDAD:
+- Eres analítico, directo, sin rodeos. Como un amigo experto en finanzas que habla claro.
+- Siempre usas los datos REALES del usuario. Nunca genérico si hay datos.
+- Citas cifras exactas: "has gastado ${catSorted[0]?catSorted[0][1].toLocaleString('es-ES'):'X'} € en ${catSorted[0]?catSorted[0][0]:'su categoría principal'}"
+- Eres proactivo: si ves un problema, lo mencionas aunque no te lo pregunten.
+- Terminas con UNA acción concreta y alcanzable.
+
+FORMATO DE RESPUESTA:
+- Usa **negrita** para cifras importantes y términos clave.
+- Usa viñetas (•) para listas, no guiones.
+- Para análisis complejos, usa secciones con títulos breves.
+- Máximo 6-8 líneas para respuestas normales. Más si piden análisis completo.
+- Para preguntas fiscales: termina con "⚠️ Verifica con tu gestor fiscal antes de aplicar."
+
+CONOCIMIENTO FISCAL ESPAÑOL QUE DEBES APLICAR:
+- IVA general: 21% | reducido: 10% | superreducido: 4%
+- IRPF ${year} tramos: hasta 12.450€ → 19% | hasta 20.200€ → 24% | hasta 35.200€ → 30% | hasta 60.000€ → 37% | hasta 300.000€ → 45% | resto → 47%
+- Autónomos: Modelo 303 (IVA trimestral), 130 (IRPF fraccionado), 100 (renta anual)
+- Cuota autónomos SS (2024): entre 230€ y 500€/mes según base elegida
+- Plan de pensiones: deducción máxima 1.500€/año (individual) + 8.500€ (empresa)
+- Fondos indexados: sin tributación hasta el reembolso (diferimiento fiscal)
+- Plusvalías: hasta 6.000€ al 19% | 6.000-50.000€ al 21% | 50.000-200.000€ al 23% | más de 200.000€ al 27%
+- Mínimo personal exento IRPF: 5.550€/año
+
+INVERSIÓN Y AHORRO:
+- Recomienda fondos indexados (MSCI World, S&P 500, MSCI Europe) como base de inversión a largo plazo
+- Para perfiles conservadores: letras del tesoro, depósitos, fondos monetarios
+- Fondo de emergencia SIEMPRE antes de invertir
+- Sugiere automatización del ahorro (transferencia automática el día de cobro)
+- Regla de interés compuesto: menciona proyecciones a 10-20 años cuando sea relevante
+
+NUNCA:
+- Digas que eres una IA, un chatbot, o que no puedes dar consejos. Actúa como gestor.
+- Des respuestas genéricas si tienes datos del usuario.
+- Repitas lo mismo en cada respuesta.
+- Digas "como te mencioné antes" si no hay historial previo en este chat.`
+}
+
+// ─── MARKDOWN RENDERER ────────────────────────────────────
+function renderMarkdown(text){
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<div style="font-size:12px;font-weight:800;color:var(--text);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px">$1</div>')
+    .replace(/^## (.+)$/gm, '<div style="font-size:14px;font-weight:800;color:var(--text);margin:10px 0 5px">$1</div>')
+    .replace(/^• (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0"><span style="flex-shrink:0;color:var(--gold)">•</span><span>$1</span></div>')
+    .replace(/^- (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0"><span style="flex-shrink:0;color:var(--gold)">•</span><span>$1</span></div>')
+    .replace(/^✅ (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0"><span>✅</span><span>$1</span></div>')
+    .replace(/^⚠️ (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0;color:#d97706"><span>⚠️</span><span>$1</span></div>')
+    .replace(/^🔴 (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0;color:#dc2626"><span>🔴</span><span>$1</span></div>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>')
+}
+
+// ─── DYNAMIC CHAT SUGGESTIONS ─────────────────────────────
+function buildChatSuggestions(){
+  const suggs = []
+  const income = user?.income || 0
+  const expenses = user?.expenses || 0
+  const savRate = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
+  const gastos = transactions.filter(t=>t.type==='gasto')
+  const catTotals = {}
+  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0]
+
+  if(user?.mode === 'autonomo'){
+    suggs.push('¿Cuánto IVA tengo que pagar este trimestre?')
+    suggs.push('¿Qué gastos me puedo deducir como autónomo?')
+    suggs.push('Explícame el Modelo 303 paso a paso')
+  } else {
+    suggs.push('¿Cómo puedo reducir lo que pago de IRPF?')
+    suggs.push('¿Vale la pena aportar a un plan de pensiones?')
+  }
+
+  if(savRate < 15 && income > 0) suggs.push(`¿Cómo puedo ahorrar más con ${income.toLocaleString('es-ES')} € al mes?`)
+  if(topCat) suggs.push(`He gastado ${topCat[1].toLocaleString('es-ES')} € en ${topCat[0]}, ¿es mucho?`)
+  if(transactions.length < 3) suggs.push('Analiza mi situación financiera y dime qué mejorar')
+  suggs.push('¿Cómo empiezo a invertir en fondos indexados?')
+  suggs.push('¿Cuánto necesito en mi fondo de emergencia?')
+  suggs.push('Dame un plan para mejorar mi ahorro este mes')
+  suggs.push('¿Qué es el interés compuesto y cómo me afecta?')
+
+  return suggs.slice(0, 6)
+}
+
+function renderChatSuggestions(){
+  const wrap = document.querySelector('.chat-suggestions')
+  if(!wrap) return
+  const suggs = buildChatSuggestions()
+  wrap.innerHTML = suggs.map(s=>`<button class="sugg-chip" onclick="askAI(this.textContent)">${s}</button>`).join('')
 }
 
 async function callAI(msg){
   chatHistory.push({ role:'user', content:msg })
-  const messages = [{ role:'system', content:buildSystemPrompt() }, ...chatHistory.slice(-10)]
+  const messages = [{ role:'system', content:buildSystemPrompt() }, ...chatHistory.slice(-14)]
   const response = await puter.ai.chat(messages, { model:'gpt-4o-mini' })
   const text = response?.message?.content || response?.text || String(response)
   chatHistory.push({ role:'assistant', content:text })
@@ -2189,7 +2418,7 @@ async function callAI(msg){
 function appendBubble(container, role, text){
   const d = document.createElement('div')
   d.className = 'bubble '+role
-  d.innerHTML = text.replace(/\n/g,'<br>')
+  d.innerHTML = role === 'ai' ? renderMarkdown(text) : text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
   container.appendChild(d)
   container.scrollTop = container.scrollHeight
   return d
@@ -2223,7 +2452,8 @@ async function sendChat(){
     typing.remove()
     appendBubble(msgs,'ai',reply)
   } catch(e){
-    typing.innerHTML = 'No se pudo conectar. Comprueba tu conexión.'
+    typing.innerHTML = '❌ Error de conexión. Comprueba tu internet e inténtalo de nuevo.'
+    console.error(e)
   }
   inp.disabled = false
   inp.focus()
