@@ -1625,6 +1625,10 @@ let sb = null
 try {
   if(SUPABASE_URL !== 'TU_SUPABASE_URL'){
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+    // Warmup: wake up Supabase immediately so login is instant
+    setTimeout(() => {
+      sb.from('profiles').select('id').limit(1).then(() => {}).catch(() => {})
+    }, 500)
   }
 } catch(e){ console.warn('Supabase no configurado, modo local') }
 
