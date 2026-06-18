@@ -12,14 +12,14 @@
 <meta name="keywords" content="Pecunia app finanzas, asesor financiero IA España, gestión dinero autónomo, control gastos personal, ahorro inteligente, IVA IRPF autónomos, finanzas personales app, declaración renta IA, planificación financiera España">
 <meta name="author" content="Pecunia">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://jodrowebs.github.io/Pecunia-app/">
+<link rel="canonical" href="https://jodrowebs.github.io/pecunia-app/">
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://jodrowebs.github.io/Pecunia-app/">
+<meta property="og:url" content="https://jodrowebs.github.io/pecunia-app/">
 <meta property="og:title" content="Pecunia – Asesor Financiero con IA para España">
 <meta property="og:description" content="Controla tus finanzas, optimiza tus impuestos y ahorra más con tu asesor financiero personal con IA. Especialmente diseñado para autónomos y particulares en España.">
-<meta property="og:image" content="https://jodrowebs.github.io/Pecunia-app/og-image.png">
+<meta property="og:image" content="https://jodrowebs.github.io/pecunia-app/og-image.png">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Pecunia">
 
@@ -27,7 +27,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Pecunia – Asesor Financiero con IA para España">
 <meta name="twitter:description" content="Controla tus finanzas, optimiza impuestos y ahorra más con IA. Gratis para empezar.">
-<meta name="twitter:image" content="https://jodrowebs.github.io/Pecunia-app/og-image.png">
+<meta name="twitter:image" content="https://jodrowebs.github.io/pecunia-app/og-image.png">
 
 <!-- Structured Data -->
 <script type="application/ld+json">
@@ -1035,7 +1035,7 @@ try {
 
 // ─── DATOS ───────────────────────────────────────────────
 const PLANS = {
-  free:       { name:'Plan Gratuito', limit:3,  chipClass:'chip-free' },
+  free:       { name:'Plan Gratuito', limit:5,  chipClass:'chip-free' },
   pro:        { name:'Plan Pro',      limit:30, chipClass:'chip-pro' },
   financiero: { name:'Financiero',    limit:999,chipClass:'chip-fin' }
 }
@@ -1272,8 +1272,12 @@ function initDashboard(){
   const benefit = income - expenses
   const savRate = income > 0 ? Math.round((benefit/income)*100) : 0
 
-  document.getElementById('tb-balance').textContent = benefit.toLocaleString('es-ES') + ' €'
-  document.getElementById('tb-change').innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Tasa de ahorro: ${savRate}%`
+  const balEl = document.getElementById('tb-balance')
+  balEl.textContent = benefit.toLocaleString('es-ES') + ' €'
+  balEl.style.color = benefit < 0 ? '#f87171' : '#fff'
+  const arrowColor = benefit >= 0 ? '#4ade80' : '#f87171'
+  const arrowPath = benefit >= 0 ? 'M6 9V3M6 3L3 6M6 3L9 6' : 'M6 3v6M6 9l3-3M6 9L3 6'
+  document.getElementById('tb-change').innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="${arrowPath}" stroke="${arrowColor}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> <span style="color:${arrowColor}">Tasa de ahorro: ${savRate}%</span>`
 
   const plan = user.plan || 'free'
   const planInfo = PLANS[plan]
@@ -1362,7 +1366,7 @@ function renderTxList(){
   }
 
   const FREE_LIMIT = 5
-  const all = [...transactions].reverse()
+  const all = [...transactions]
   const makeTx = t => `
     <div class="tx-item">
       <div class="tx-icon ${t.type}">${t.type==='ingreso'?svgIn:svgOut}</div>
@@ -1393,9 +1397,11 @@ const SECS = ['inicio','asesor','fiscal','finanzas','edu','perfil','planes']
 function goTo(id, btn){
   SECS.forEach(s=>document.getElementById('sec-'+s).classList.remove('on'))
   document.getElementById('sec-'+id).classList.add('on')
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))
-  if(btn) btn.classList.add('active')
-  document.getElementById('main-topbar').style.display = ['asesor'].includes(id)?'none':'block'
+  if(btn){
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))
+    btn.classList.add('active')
+  }
+  document.getElementById('main-topbar').style.display = id==='asesor'?'none':'block'
   document.getElementById('fab').style.display = id==='finanzas'?'flex':'none'
   document.getElementById('main-scroll').scrollTo(0,0)
   if(id==='asesor') setTimeout(()=>document.getElementById('chat-inp').focus(),100)
@@ -1555,10 +1561,15 @@ async function saveTransaction(){
     if(!error && data) tx.id = data.id
   }
 
-  transactions.push(tx)
+  transactions.unshift(tx)
   if(!sb) saveTx()
   closeAddModal()
   renderTxList()
+  renderHealthScore()
+  generateSmartAlerts()
+  renderCategoryChart()
+  renderPrediction()
+  renderInsights()
   showToast('Movimiento guardado')
 }
 
@@ -1577,7 +1588,7 @@ function obNext(step){
     document.querySelectorAll('.ob-dot').forEach((d,i)=>{
       d.classList.toggle('active', i <= step)
     })
-    const titles = ['','¿Cuántos años tienes?','¡Ya casi está!']
+    const titles = ['','¿Cuántos años tienes?','¡Todo listo!']
     const subs = ['','Esto nos ayuda a darte mejores consejos','Tu perfil financiero está listo']
     document.getElementById('ob-title').textContent = titles[step] || '¡Todo listo!'
     document.getElementById('ob-sub').textContent = subs[step] || ''
@@ -1854,6 +1865,7 @@ if(sb){
         user = { ...profile, email: session.user.email }
         const { data: txData } = await sb.from('transactions').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false })
         transactions = txData || []
+        enterApp()
       }
     }
   })
