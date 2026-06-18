@@ -945,7 +945,8 @@ async function doLogin(){
 
   try {
     if(sb){
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
+      const withTimeout = (promise, ms) => Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))])
+      const { data, error } = await withTimeout(sb.auth.signInWithPassword({ email, password: pass }), 8000)
       if(error){ showToast('Email o contraseña incorrectos'); return }
       const { data: profile } = await sb.from('profiles').select('*').eq('id', data.user.id).single()
       user = { ...(profile||{}), id: data.user.id, email: data.user.email, plan: profile?.plan||'free', name: profile?.name||email.split('@')[0] }
