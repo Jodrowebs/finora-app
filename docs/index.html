@@ -228,6 +228,7 @@
 
 <link rel="manifest" href="manifest.json">
 <script src="https://js.puter.com/v2/"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -1067,6 +1068,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 
         <!-- Contenido real (visible solo con Pro+) -->
         <div id="fiscal-autonomo" style="display:none">
+          <!-- Botones acción rápida -->
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button class="btn-outline" style="flex:1;font-size:12px;padding:10px" onclick="openScanner()">📷 Escanear factura</button>
+            <button class="btn-outline" style="flex:1;font-size:12px;padding:10px" onclick="exportPDF()">📄 Exportar PDF</button>
+          </div>
           <div class="stat-grid">
             <div class="stat-card"><div class="stat-label">IVA Q2 estimado</div><div class="stat-value neg" id="iva-estimate">—</div><div class="stat-change warn">Vence 20 julio</div></div>
             <div class="stat-card"><div class="stat-label">IRPF estimado</div><div class="stat-value" id="irpf-estimate">—</div></div>
@@ -1464,6 +1470,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
           <div class="plan-chip" id="prof-plan-chip" style="display:inline-flex;margin:0 auto 16px">Plan Gratuito</div>
           <button onclick="openProfileEdit()" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)">Editar perfil</button>
         </div>
+        <!-- Botón PDF (solo Pro) -->
+        <div id="prof-pdf-btn" style="display:none;margin-bottom:12px">
+          <button onclick="exportPDF()" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--dark);border:none;border-radius:14px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+            📄 Exportar informe PDF
+          </button>
+        </div>
+
         <div id="prof-upgrade-card" class="card" style="margin-bottom:12px;cursor:pointer" onclick="goTo('planes')">
           <div style="padding:16px;display:flex;align-items:center;gap:12px">
             <div style="flex:1"><div style="font-size:14px;font-weight:600" id="prof-upgrade-title">Mejorar plan</div><div style="font-size:12px;color:var(--text2);margin-top:2px" id="prof-upgrade-sub">Pro desde 9 €/mes · IA ilimitada</div></div>
@@ -1570,6 +1583,28 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 
 <!-- UPGRADE MODAL -->
 <!-- Payment method modal -->
+<!-- Scanner modal -->
+<div class="modal" id="scanner-modal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">📷 Escanear factura o ticket</div>
+    <div class="sheet-sub">La IA extrae automáticamente el importe, proveedor, fecha y categoría</div>
+    <div id="scanner-drop" onclick="document.getElementById('scanner-file').click()" style="border:2px dashed var(--border);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color .2s">
+      <div style="font-size:36px;margin-bottom:8px">📎</div>
+      <div style="font-size:13px;font-weight:600">Toca para subir imagen</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">JPG, PNG o PDF · Máx. 10 MB</div>
+      <input type="file" id="scanner-file" accept="image/*,application/pdf" style="display:none" onchange="handleScannerFile(this)"/>
+    </div>
+    <div id="scanner-preview" style="display:none;margin-bottom:12px;text-align:center">
+      <img id="scanner-img" style="max-width:100%;max-height:180px;border-radius:10px;border:1px solid var(--border)"/>
+    </div>
+    <div id="scanner-result" style="display:none;background:var(--bg);border-radius:12px;padding:14px;margin-bottom:14px;font-size:12px"></div>
+    <button id="scanner-btn" class="btn btn-c" style="width:100%;display:none" onclick="runScanner()">🔍 Analizar con IA</button>
+    <button id="scanner-add-btn" class="btn btn-c" style="width:100%;display:none;background:#4ade80;color:#000" onclick="addFromScanner()">✅ Añadir a movimientos</button>
+    <div id="scanner-loading" style="display:none;text-align:center;padding:20px;font-size:13px;color:var(--text2)">⏳ Analizando imagen con IA...</div>
+  </div>
+</div>
+
 <div class="modal" id="pay-modal" onclick="if(event.target===this)this.classList.remove('on')">
   <div class="modal-sheet">
     <div class="sheet-handle"></div>
@@ -1979,13 +2014,14 @@ async function doLogout(){
   switchTab('login')
 }
 
-function enterApp(){
+async function enterApp(){
   saveUser()
   document.getElementById('auth-screen').classList.remove('on')
   document.getElementById('app').style.display = 'flex'
   setTimeout(()=>document.getElementById('app').classList.add('on'), 50)
   initDashboard()
   updateAiCounter()
+  await loadAIMemory()
 }
 
 // ─── DASHBOARD ───────────────────────────────────────────
@@ -2096,6 +2132,10 @@ function initDashboard(){
 
   // Dynamic fiscal deadline
   document.getElementById('fiscal-next-deadline').textContent = getNextFiscalDeadline()
+
+  // PDF button visibility
+  const pdfBtn = document.getElementById('prof-pdf-btn')
+  if(pdfBtn) pdfBtn.style.display = isPro() ? 'block' : 'none'
 
   // Profile upgrade card adaptation
   const upgradeCard = document.getElementById('prof-upgrade-card')
@@ -2229,7 +2269,10 @@ function goTo(id, btn){
   document.getElementById('main-topbar').style.display = id==='asesor'?'none':'block'
   document.getElementById('fab').style.display = id==='finanzas'?'flex':'none'
   document.getElementById('main-scroll').scrollTo(0,0)
-  if(id==='asesor') setTimeout(()=>document.getElementById('chat-inp').focus(),100)
+  if(id==='asesor'){
+    setTimeout(()=>document.getElementById('chat-inp').focus(),100)
+    setTimeout(()=>maybeShowDailyBrief(), 800)
+  }
   updateAiCounter()
 }
 
@@ -2542,6 +2585,7 @@ async function callAI(msg){
   const response = await puter.ai.chat(messages, { model:'gpt-4o-mini' })
   const text = response?.message?.content || response?.text || String(response)
   chatHistory.push({ role:'assistant', content:text })
+  saveAIMemory()
   return text
 }
 
@@ -3123,6 +3167,301 @@ function doPay(method){
 
 function togglePfaq(el){
   el.classList.toggle('open')
+}
+
+// ─── AI MEMORY (Firestore) ───────────────────────────────
+async function loadAIMemory(){
+  try {
+    const fu = auth.currentUser
+    if(!fu) return
+    const doc = await db.collection('profiles').doc(fu.uid).get()
+    const data = doc.data()
+    if(data?.chatMemory && Array.isArray(data.chatMemory)){
+      chatHistory.length = 0
+      data.chatMemory.forEach(m => chatHistory.push(m))
+    }
+  } catch(e){ console.warn('loadAIMemory:', e) }
+}
+
+async function saveAIMemory(){
+  try {
+    const fu = auth.currentUser
+    if(!fu || !user) return
+    await db.collection('profiles').doc(fu.uid).update({
+      chatMemory: chatHistory.slice(-12)
+    })
+  } catch(e){ console.warn('saveAIMemory:', e) }
+}
+
+// ─── DAILY BRIEF ─────────────────────────────────────────
+let _briefDone = false
+function maybeShowDailyBrief(){
+  if(_briefDone || !user || !user.income) return
+  const today = new Date().toISOString().split('T')[0]
+  const last  = localStorage.getItem('pec_brief_date')
+  if(last === today) return
+  _briefDone = true
+  localStorage.setItem('pec_brief_date', today)
+  const msgs = document.getElementById('chat-msgs')
+  if(!msgs) return
+  // Mostrar intro primero, luego pedir brief a la IA
+  const intro = document.createElement('div')
+  intro.className = 'bubble ai'
+  intro.innerHTML = `<span style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">📋 Resumen diario · ${new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}</span>`
+  msgs.appendChild(intro)
+  setTimeout(() => {
+    const inp = document.getElementById('chat-inp')
+    if(inp) inp.value = '¿Cómo voy este mes? Dame un resumen financiero diario con los puntos clave y una acción concreta para mejorar hoy.'
+    sendChat()
+  }, 600)
+}
+
+// ─── PDF EXPORT ──────────────────────────────────────────
+function exportPDF(){
+  if(!isPro()){ showToast('Exportar PDF es exclusivo de Plan Pro · Mejora tu plan'); goTo('planes'); return }
+  try {
+    const { jsPDF } = window.jspdf
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' })
+    const now  = new Date()
+    const dateStr = now.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})
+    const income   = user.income   || 0
+    const expenses = user.expenses || 0
+    const benefit  = income - expenses
+    const savRate  = income > 0 ? Math.round((benefit/income)*100) : 0
+    const hs       = calcHealthScore()
+    const gastos   = transactions.filter(t=>t.type==='gasto')
+    const catTotals = {}
+    gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+    const topCats = Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).slice(0,5)
+
+    // Cabecera
+    doc.setFillColor(10,10,10)
+    doc.rect(0,0,210,32,  'F')
+    doc.setTextColor(201,168,76)
+    doc.setFontSize(20)
+    doc.setFont('helvetica','bold')
+    doc.text('Pecunia', 14, 14)
+    doc.setFontSize(9)
+    doc.setTextColor(180,180,180)
+    doc.text('Informe financiero personal', 14, 21)
+    doc.text(dateStr, 196, 21, {align:'right'})
+    doc.setTextColor(255,255,255)
+    doc.setFontSize(10)
+    doc.text(user.name, 14, 28)
+
+    let y = 42
+
+    // Salud financiera
+    doc.setTextColor(30,30,30)
+    doc.setFont('helvetica','bold')
+    doc.setFontSize(13)
+    doc.text('Salud financiera', 14, y); y += 7
+    doc.setFont('helvetica','normal')
+    doc.setFontSize(28)
+    const scoreColor = hs.total >= 70 ? [74,222,128] : hs.total >= 45 ? [251,191,36] : [248,113,113]
+    doc.setTextColor(...scoreColor)
+    doc.text(String(hs.total), 14, y+8)
+    doc.setFontSize(11)
+    doc.setTextColor(100,100,100)
+    doc.text('/ 100', 32, y+8)
+    y += 18
+
+    // Resumen mensual
+    doc.setFillColor(245,245,245)
+    doc.roundedRect(14, y, 182, 30, 3, 3, 'F')
+    doc.setFont('helvetica','bold')
+    doc.setFontSize(9)
+    doc.setTextColor(100,100,100)
+    doc.text('INGRESOS', 24, y+9)
+    doc.text('GASTOS', 84, y+9)
+    doc.text('AHORRO', 144, y+9)
+    doc.setFontSize(13)
+    doc.setTextColor(74,222,128)
+    doc.text(income.toLocaleString('es-ES')+' €', 24, y+20)
+    doc.setTextColor(248,113,113)
+    doc.text(expenses.toLocaleString('es-ES')+' €', 84, y+20)
+    doc.setTextColor(benefit>=0?[74,222,128]:[248,113,113])
+    doc.text(benefit.toLocaleString('es-ES')+' €  ('+savRate+'%)', 144, y+20)
+    y += 38
+
+    // Gastos por categoría
+    if(topCats.length){
+      doc.setFont('helvetica','bold')
+      doc.setFontSize(13)
+      doc.setTextColor(30,30,30)
+      doc.text('Gastos por categoría', 14, y); y += 7
+      const totalG = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+      topCats.forEach(([cat, amt]) => {
+        const pct = totalG > 0 ? Math.round((amt/totalG)*100) : 0
+        doc.setFont('helvetica','normal')
+        doc.setFontSize(10)
+        doc.setTextColor(60,60,60)
+        doc.text(cat, 14, y)
+        doc.setTextColor(30,30,30)
+        doc.setFont('helvetica','bold')
+        doc.text(amt.toLocaleString('es-ES')+' €', 140, y, {align:'right'})
+        doc.setFont('helvetica','normal')
+        doc.setTextColor(120,120,120)
+        doc.text(pct+'%', 196, y, {align:'right'})
+        // Barra
+        doc.setFillColor(230,230,230)
+        doc.rect(14, y+2, 120, 2, 'F')
+        doc.setFillColor(201,168,76)
+        doc.rect(14, y+2, 120*(pct/100), 2, 'F')
+        y += 10
+      })
+      y += 4
+    }
+
+    // Últimos movimientos
+    const recent = transactions.slice(0,10)
+    if(recent.length){
+      doc.setFont('helvetica','bold')
+      doc.setFontSize(13)
+      doc.setTextColor(30,30,30)
+      doc.text('Últimos movimientos', 14, y); y += 7
+      recent.forEach(t => {
+        if(y > 270){ doc.addPage(); y = 20 }
+        const sign  = t.type==='ingreso' ? '+' : '-'
+        const color = t.type==='ingreso' ? [74,222,128] : [248,113,113]
+        doc.setFont('helvetica','normal')
+        doc.setFontSize(9)
+        doc.setTextColor(80,80,80)
+        doc.text(t.date||'', 14, y)
+        doc.setTextColor(30,30,30)
+        doc.text((t.description||t.desc||t.cat||'').slice(0,32), 36, y)
+        doc.setTextColor(100,100,100)
+        doc.text(t.cat||'', 130, y)
+        doc.setFont('helvetica','bold')
+        doc.setTextColor(...color)
+        doc.text(sign+parseFloat(t.amount).toLocaleString('es-ES')+' €', 196, y, {align:'right'})
+        y += 6
+      })
+    }
+
+    // Pie
+    doc.setFontSize(8)
+    doc.setFont('helvetica','normal')
+    doc.setTextColor(160,160,160)
+    doc.text('Generado por Pecunia · pecunia.app · Información orientativa, no constituye asesoramiento financiero.', 105, 290, {align:'center'})
+
+    doc.save(`Pecunia_Informe_${now.toISOString().split('T')[0]}.pdf`)
+    showToast('✅ Informe PDF descargado')
+  } catch(e){
+    console.error('PDF error:', e)
+    showToast('Error al generar el PDF · Inténtalo de nuevo')
+  }
+}
+
+// ─── SCANNER IA ──────────────────────────────────────────
+let _scannerFile = null
+let _scannerData = null
+
+function openScanner(){
+  if(!isFinanciero()){ showToast('El escáner de facturas es exclusivo de Autónomos+ · Mejora tu plan'); goTo('planes'); return }
+  _scannerFile = null
+  _scannerData = null
+  document.getElementById('scanner-file').value = ''
+  document.getElementById('scanner-preview').style.display = 'none'
+  document.getElementById('scanner-result').style.display = 'none'
+  document.getElementById('scanner-btn').style.display = 'none'
+  document.getElementById('scanner-add-btn').style.display = 'none'
+  document.getElementById('scanner-loading').style.display = 'none'
+  document.getElementById('scanner-modal').classList.add('on')
+}
+
+function handleScannerFile(input){
+  const file = input.files[0]
+  if(!file) return
+  _scannerFile = file
+  const reader = new FileReader()
+  reader.onload = e => {
+    document.getElementById('scanner-img').src = e.target.result
+    document.getElementById('scanner-preview').style.display = 'block'
+    document.getElementById('scanner-btn').style.display = 'block'
+    document.getElementById('scanner-result').style.display = 'none'
+    document.getElementById('scanner-add-btn').style.display = 'none'
+  }
+  reader.readAsDataURL(file)
+}
+
+async function runScanner(){
+  if(!_scannerFile) return
+  document.getElementById('scanner-btn').style.display = 'none'
+  document.getElementById('scanner-loading').style.display = 'block'
+  document.getElementById('scanner-result').style.display = 'none'
+
+  const toBase64 = file => new Promise((res, rej) => {
+    const r = new FileReader()
+    r.onload = e => res(e.target.result)
+    r.onerror = rej
+    r.readAsDataURL(file)
+  })
+
+  try {
+    const base64 = await toBase64(_scannerFile)
+    const prompt = `Analiza esta factura o ticket y extrae exactamente:
+1. Proveedor/comercio (nombre)
+2. Fecha (formato YYYY-MM-DD, si no hay usa hoy)
+3. Importe TOTAL (solo número decimal, sin símbolo €)
+4. IVA aplicado (solo número, sin %)
+5. Categoría (elige una: Alimentación, Transporte, Ocio, Software, Salud, Formación, Gestoría, Vivienda, Ropa, Suscripciones, Restaurantes, Viajes, Seguros, Otros)
+6. Descripción breve (máx 40 caracteres)
+
+Responde SOLO en este formato JSON exacto sin texto adicional:
+{"proveedor":"...","fecha":"YYYY-MM-DD","importe":0.00,"iva":21,"categoria":"...","descripcion":"..."}`
+
+    const response = await puter.ai.chat([
+      { role:'user', content:[
+        { type:'text', text: prompt },
+        { type:'image_url', image_url:{ url: base64 } }
+      ]}
+    ], { model:'gpt-4o' })
+
+    const text = response?.message?.content || response?.text || String(response)
+    const jsonMatch = text.match(/\{[\s\S]*?\}/)
+    if(!jsonMatch) throw new Error('No se pudo leer la factura')
+    _scannerData = JSON.parse(jsonMatch[0])
+
+    const resultEl = document.getElementById('scanner-result')
+    resultEl.style.display = 'block'
+    resultEl.innerHTML = `
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--text)">✅ Datos extraídos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">PROVEEDOR</div><div style="font-weight:600;font-size:12px">${_scannerData.proveedor}</div></div>
+        <div><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">FECHA</div><div style="font-weight:600;font-size:12px">${_scannerData.fecha}</div></div>
+        <div><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">IMPORTE</div><div style="font-weight:700;font-size:16px;color:#f87171">${parseFloat(_scannerData.importe).toLocaleString('es-ES')} €</div></div>
+        <div><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">IVA</div><div style="font-weight:600;font-size:12px">${_scannerData.iva}%</div></div>
+        <div style="grid-column:span 2"><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">CATEGORÍA</div><div style="font-weight:600;font-size:12px">${_scannerData.categoria}</div></div>
+        <div style="grid-column:span 2"><div style="color:var(--text2);font-size:10px;font-weight:600;margin-bottom:2px">DESCRIPCIÓN</div><div style="font-weight:600;font-size:12px">${_scannerData.descripcion}</div></div>
+      </div>`
+    document.getElementById('scanner-add-btn').style.display = 'block'
+  } catch(e){
+    const resultEl = document.getElementById('scanner-result')
+    resultEl.style.display = 'block'
+    resultEl.innerHTML = `<div style="color:#f87171">❌ ${e.message || 'Error al analizar'}. Prueba con una imagen más nítida y bien encuadrada.</div>`
+    document.getElementById('scanner-btn').style.display = 'block'
+  }
+  document.getElementById('scanner-loading').style.display = 'none'
+}
+
+async function addFromScanner(){
+  if(!_scannerData) return
+  document.getElementById('scanner-modal').classList.remove('on')
+  // Pre-rellenar modal de añadir transacción
+  openAddModal()
+  setTimeout(() => {
+    setTxType('gasto')
+    document.getElementById('inp-amount').value = _scannerData.importe
+    document.getElementById('inp-desc').value   = _scannerData.descripcion || _scannerData.proveedor
+    // Seleccionar categoría
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      if(btn.textContent.trim() === _scannerData.categoria || btn.dataset.cat === _scannerData.categoria){
+        btn.click()
+      }
+    })
+  }, 200)
+  showToast('Datos de la factura cargados · Revisa y confirma')
 }
 
 // ─── TOAST ────────────────────────────────────────────────
