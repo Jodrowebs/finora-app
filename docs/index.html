@@ -1949,13 +1949,28 @@ let regMode = 'autonomo'
 
 // ─── PERSISTENCIA (Firebase) ──────────────────────────────
 async function loadUserFromFirebase(firebaseUser){
-  const profileDoc = await db.collection('profiles').doc(firebaseUser.uid).get()
-  const profile = profileDoc.data()
-  if(profile){
-    user = { ...profile, id: firebaseUser.uid, email: firebaseUser.email, plan: profile.plan||'free', name: profile.name||firebaseUser.email.split('@')[0] }
-    const txSnap = await db.collection('transactions').where('user_id','==',firebaseUser.uid).orderBy('created_at','desc').get()
-    transactions = txSnap.docs.map(d => ({ id: d.id, ...d.data() }))
-  }
+  try {
+    const profileDoc = await db.collection('profiles').doc(firebaseUser.uid).get()
+    const profile = profileDoc.data()
+    if(profile){
+      user = { ...profile, id: firebaseUser.uid, email: firebaseUser.email, plan: profile.plan||'free', name: profile.name||firebaseUser.email.split('@')[0] }
+    } else {
+      // Profile doesn't exist yet — create minimal one so id is set
+      user = { id: firebaseUser.uid, email: firebaseUser.email, name: firebaseUser.email.split('@')[0], plan:'free', mode:'autonomo', income:0, expenses:0 }
+    }
+  } catch(e){ console.error('Error loading profile:', e) }
+
+  try {
+    // Load transactions without orderBy to avoid needing a composite index
+    const txSnap = await db.collection('transactions').where('user_id','==',firebaseUser.uid).get()
+    transactions = txSnap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a,b) => {
+        const ta = a.created_at?.toDate ? a.created_at.toDate().getTime() : (typeof a.id==='number'?a.id:0)
+        const tb = b.created_at?.toDate ? b.created_at.toDate().getTime() : (typeof b.id==='number'?b.id:0)
+        return tb - ta
+      })
+  } catch(e){ console.error('Error loading transactions:', e); transactions = [] }
 }
 
 async function saveUser(){
