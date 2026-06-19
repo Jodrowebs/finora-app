@@ -3258,12 +3258,25 @@ function detectSubscriptions(){
 // ─── HEALTH SCORE ────────────────────────────────────────
 function calcHealthScore(){
   if(!user) return { total: 0, breakdown: [] }
-  const income   = user.income || 0
-  const expenses = user.expenses || 0
-  if(income === 0) return { total: 0, breakdown: [] }
 
-  const savRate   = Math.max(0, (income - expenses) / income)
-  const expRatio  = Math.min(1, expenses / income)
+  // Use real transaction data for this month
+  const now = new Date()
+  const isCurMonth = t => {
+    if(t.created_at?.toDate){ const d=t.created_at.toDate(); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth() }
+    if(typeof t.id==='number'){ const d=new Date(t.id); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth() }
+    return true
+  }
+  const moTx = transactions.filter(isCurMonth)
+  const txIncome   = moTx.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const txExpenses = moTx.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+
+  // Fall back to profile values if no transactions yet
+  const income   = txIncome   > 0 ? txIncome   : (user.income   || 0)
+  const expenses = txExpenses > 0 ? txExpenses : (user.expenses || 0)
+  if(income === 0 && transactions.length === 0) return { total: 0, breakdown: [] }
+
+  const savRate   = income > 0 ? Math.max(0, (income - expenses) / income) : 0
+  const expRatio  = income > 0 ? Math.min(1, expenses / income) : 1
   const gastos    = transactions.filter(t => t.type === 'gasto')
   const goals     = JSON.parse(localStorage.getItem('pec_goals')||'[]')
 
