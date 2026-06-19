@@ -4268,10 +4268,7 @@ function renderMoneyHero(){
   const barEl      = document.getElementById('money-hero-bar')
   if(!heroEl || !amountEl) return
 
-  const income   = user?.income   || 0
-  const expenses = user?.expenses || 0
-  if(!income){ heroEl.style.display='none'; return }
-  heroEl.style.display='block'
+  heroEl.style.display = 'block'
 
   const now         = new Date()
   const daysPassed  = now.getDate()
@@ -4279,33 +4276,42 @@ function renderMoneyHero(){
   const daysLeft    = daysInMonth - daysPassed
   const ratio       = daysPassed / daysInMonth
 
-  const gastosActuales = transactions.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
-  const ingresosActuales = transactions.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  // Use current month transactions only
+  const isCurMonth = t => {
+    if(t.created_at?.toDate){ const d=t.created_at.toDate(); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth() }
+    if(typeof t.id==='number'){ const d=new Date(t.id); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth() }
+    return true
+  }
+  const moTx = transactions.filter(isCurMonth)
+  const txIncome   = moTx.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const txExpenses = moTx.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
 
-  // Disponible = ingresos declarados - gastos reales registrados
-  const disponible = income - gastosActuales
-  const proyeccion = ratio > 0.05 ? Math.round(gastosActuales / ratio) : expenses
-  const ahorroProyectado = income - proyeccion
+  // Income reference: real tx income if exists, else profile income
+  const profileIncome = user?.income || 0
+  const incomeRef = txIncome > 0 ? txIncome : profileIncome
+
+  const disponible = incomeRef - txExpenses
+  const proyeccion = ratio > 0.05 && txExpenses > 0 ? Math.round(txExpenses / ratio) : txExpenses
+  const ahorroProyectado = incomeRef - proyeccion
 
   amountEl.textContent = disponible.toLocaleString('es-ES') + ' €'
   amountEl.style.color = disponible >= 0 ? '#fff' : '#f87171'
 
-  if(transactions.length === 0){
-    subEl.textContent = `Sin movimientos registrados · ${daysLeft} días para fin de mes`
+  if(moTx.length === 0 && !profileIncome){
+    subEl.textContent = `Añade tus ingresos en Perfil · ${daysLeft} días para fin de mes`
+  } else if(moTx.length === 0){
+    subEl.textContent = `Ingresos declarados: ${profileIncome.toLocaleString('es-ES')} € · ${daysLeft} días restantes`
   } else {
-    const gDiario = gastosActuales / Math.max(1, daysPassed)
+    const gDiario = txExpenses / Math.max(1, daysPassed)
     subEl.textContent = `Ritmo: ${Math.round(gDiario).toLocaleString('es-ES')} €/día · ${daysLeft} días restantes`
   }
 
   predEl.textContent = ahorroProyectado.toLocaleString('es-ES') + ' € ahorro previsto'
   predEl.style.color = ahorroProyectado >= 0 ? '#4ade80' : '#f87171'
 
-  // Barra de gasto vs ingreso (% del mes consumido en gasto)
-  const pct = income > 0 ? Math.min(100, Math.round((gastosActuales/income)*100)) : 0
+  const pct = incomeRef > 0 ? Math.min(100, Math.round((txExpenses/incomeRef)*100)) : 0
   setTimeout(()=>{ if(barEl) barEl.style.width = pct + '%' }, 150)
-  if(barEl){
-    barEl.style.background = pct > 90 ? '#f87171' : pct > 70 ? '#fb923c' : 'linear-gradient(90deg,#c9a84c,#f5c842)'
-  }
+  if(barEl) barEl.style.background = pct > 90 ? '#f87171' : pct > 70 ? '#fb923c' : 'linear-gradient(90deg,#c9a84c,#f5c842)'
 }
 
 // ─── STREAK ──────────────────────────────────────────────
