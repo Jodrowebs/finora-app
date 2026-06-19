@@ -74,13 +74,6 @@
   "softwareVersion": "1.0",
   "datePublished": "2026-01-01",
   "dateModified": "2026-06-18",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "ratingCount": "127",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
   "offers": [
     {
       "@type": "Offer",
@@ -124,9 +117,8 @@
     "Planificación de ahorro e inversión"
   ],
   "author": {
-    "@type": "Person",
-    "name": "Jonathan Díaz",
-    "email": "jonathandiaz2008pro@gmail.com"
+    "@type": "Organization",
+    "name": "Pecunia"
   },
   "publisher": {
     "@type": "Organization",
@@ -748,6 +740,52 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 .faq-item:last-child{border:none}
 .faq-q{font-size:13px;font-weight:600;margin-bottom:6px;cursor:pointer}
 .faq-a{font-size:12px;color:var(--text2);line-height:1.7}
+
+/* ─── RADIOGRAFÍA WOW ──────────────────────────────── */
+#radiografia-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+#radiografia-modal.on{display:flex}
+.radiografia-sheet{background:#0d0d0d;border-radius:24px;width:100%;max-width:380px;overflow:hidden;border:1px solid #2a2a2a}
+.radiografia-head{background:linear-gradient(135deg,#1a1a1a,#0d0d0d);padding:22px 20px 16px;text-align:center;border-bottom:1px solid #2a2a2a}
+.radiografia-head-icon{font-size:32px;margin-bottom:8px}
+.radiografia-head-title{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.4px}
+.radiografia-head-sub{font-size:12px;color:#6b7280;margin-top:4px}
+.radiografia-body{padding:16px 20px 20px}
+.rx-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #1f1f1f;align-items:flex-start}
+.rx-item:last-child{border:none}
+.rx-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.rx-content{flex:1}
+.rx-label{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.rx-value{font-size:13px;font-weight:700;color:#fff;line-height:1.4}
+.rx-sub{font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.4}
+.rx-close{display:block;width:100%;margin-top:16px;padding:14px;background:linear-gradient(135deg,#c9a84c,#f5c842);color:#0d0d0d;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.2px}
+
+/* ─── STREAK CARD ──────────────────────────────────── */
+.streak-bar{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(245,200,66,.05));border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.streak-fire{font-size:22px;flex-shrink:0}
+.streak-text{flex:1}
+.streak-title{font-size:13px;font-weight:700;color:var(--text)}
+.streak-sub{font-size:11px;color:var(--text2)}
+.streak-count{font-size:20px;font-weight:800;color:var(--gold)}
+
+/* ─── ACHIEVEMENT TOAST ────────────────────────────── */
+.achievement-pop{position:fixed;top:calc(var(--safe-top) + 60px);left:50%;transform:translateX(-50%) translateY(-20px);background:#0d0d0d;border:1.5px solid var(--gold);border-radius:16px;padding:12px 18px;z-index:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;min-width:220px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.achievement-pop.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.achievement-pop-icon{font-size:20px;margin-bottom:2px}
+.achievement-pop-title{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.3px}
+.achievement-pop-sub{font-size:11px;color:#9ca3af;margin-top:2px}
+
+/* ─── DINERO DISPONIBLE HERO ───────────────────────── */
+.money-hero{background:linear-gradient(135deg,#0d0d0d 0%,#171717 100%);border-radius:var(--r);border:1px solid #2a2a2a;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.money-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,.08) 0%,transparent 70%);pointer-events:none}
+.money-hero-label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.money-hero-amount{font-size:36px;font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1}
+.money-hero-sub{font-size:12px;color:#6b7280;margin-top:6px}
+.money-hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.money-hero-right{text-align:right;flex-shrink:0}
+.money-hero-pred{font-size:11px;color:#9ca3af}
+.money-hero-pred-val{font-size:14px;font-weight:700;margin-top:2px}
+.money-hero-progress{height:3px;background:#2a2a2a;border-radius:2px;margin-top:14px;overflow:hidden}
+.money-hero-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .8s ease}
 </style>
 </head>
 <body>
@@ -917,6 +955,26 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
   </div>
 </div>
 
+<!-- RADIOGRAFÍA MODAL -->
+<div id="radiografia-modal">
+  <div class="radiografia-sheet">
+    <div class="radiografia-head">
+      <div class="radiografia-head-icon">🔬</div>
+      <div class="radiografia-head-title">Tu radiografía financiera</div>
+      <div class="radiografia-head-sub">Análisis automático de tu situación real</div>
+    </div>
+    <div class="radiografia-body" id="radiografia-body">
+    </div>
+  </div>
+</div>
+
+<!-- ACHIEVEMENT POP -->
+<div class="achievement-pop" id="achievement-pop">
+  <div class="achievement-pop-icon" id="achievement-icon">🏆</div>
+  <div class="achievement-pop-title" id="achievement-title">¡Logro desbloqueado!</div>
+  <div class="achievement-pop-sub" id="achievement-sub"></div>
+</div>
+
 <!-- APP -->
 <div id="app">
   <div class="status-space"></div>
@@ -936,6 +994,34 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 
       <!-- INICIO -->
       <div class="sec on" id="sec-inicio">
+
+        <!-- Streak bar -->
+        <div class="streak-bar" id="streak-bar" style="display:none">
+          <div class="streak-fire">🔥</div>
+          <div class="streak-text">
+            <div class="streak-title">Racha activa</div>
+            <div class="streak-sub" id="streak-sub">Llevas días usando Pecunia</div>
+          </div>
+          <div class="streak-count" id="streak-count">0</div>
+        </div>
+
+        <!-- Dinero disponible hero -->
+        <div class="money-hero" id="money-hero">
+          <div class="money-hero-row">
+            <div>
+              <div class="money-hero-label">Disponible este mes</div>
+              <div class="money-hero-amount" id="money-hero-amount">— €</div>
+              <div class="money-hero-sub" id="money-hero-sub">Calculando...</div>
+            </div>
+            <div class="money-hero-right">
+              <div class="money-hero-pred">Fin de mes</div>
+              <div class="money-hero-pred-val" id="money-hero-pred">— €</div>
+            </div>
+          </div>
+          <div class="money-hero-progress">
+            <div class="money-hero-progress-fill" id="money-hero-bar" style="width:0%"></div>
+          </div>
+        </div>
 
         <!-- Health Score -->
         <div class="health-card" id="health-card">
@@ -2176,6 +2262,8 @@ function initDashboard(){
   renderCategoryChart()
   renderPrediction()
   renderInsights()
+  renderMoneyHero()
+  renderStreak()
 
   // Chat welcome personalizado
   const savRate2 = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
@@ -2544,30 +2632,61 @@ function renderMarkdown(text){
 // ─── DYNAMIC CHAT SUGGESTIONS ─────────────────────────────
 function buildChatSuggestions(){
   const suggs = []
-  const income = user?.income || 0
+  const income   = user?.income   || 0
   const expenses = user?.expenses || 0
-  const savRate = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
-  const gastos = transactions.filter(t=>t.type==='gasto')
-  const catTotals = {}
+  const savRate  = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
+  const gastos   = transactions.filter(t=>t.type==='gasto')
+  const catTotals= {}
   gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
-  const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0]
+  const topCats  = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])
+  const topCat   = topCats[0]
+  const subs     = detectSubscriptions()
 
-  if(user?.mode === 'autonomo'){
-    suggs.push('¿Cuánto IVA tengo que pagar este trimestre?')
-    suggs.push('¿Qué gastos me puedo deducir como autónomo?')
-    suggs.push('Explícame el Modelo 303 paso a paso')
-  } else {
-    suggs.push('¿Cómo puedo reducir lo que pago de IRPF?')
-    suggs.push('¿Vale la pena aportar a un plan de pensiones?')
+  // Sugerencias basadas en alertas REALES detectadas
+  if(subs.length >= 2){
+    const subsTotal = subs.reduce((s,x)=>s+x.total,0)
+    suggs.push(`Detecté ${subs.length} suscripciones por ${subsTotal.toLocaleString('es-ES')} € ¿cuáles puedo cancelar?`)
   }
 
-  if(savRate < 15 && income > 0) suggs.push(`¿Cómo puedo ahorrar más con ${income.toLocaleString('es-ES')} € al mes?`)
-  if(topCat) suggs.push(`He gastado ${topCat[1].toLocaleString('es-ES')} € en ${topCat[0]}, ¿es mucho?`)
-  if(transactions.length < 3) suggs.push('Analiza mi situación financiera y dime qué mejorar')
-  suggs.push('¿Cómo empiezo a invertir en fondos indexados?')
-  suggs.push('¿Cuánto necesito en mi fondo de emergencia?')
-  suggs.push('Dame un plan para mejorar mi ahorro este mes')
-  suggs.push('¿Qué es el interés compuesto y cómo me afecta?')
+  if(savRate < 10 && income > 0){
+    suggs.push(`Solo ahorro el ${savRate}% · ¿cómo llego al 20% con ${income.toLocaleString('es-ES')} €/mes?`)
+  } else if(savRate >= 20){
+    suggs.push(`Ahorro ${savRate}% · ¿dónde debería invertir el excedente?`)
+  }
+
+  if(topCat && catTotals[topCat[0]] > 0){
+    const pct = gastos.length > 0 ? Math.round((topCat[1]/gastos.reduce((s,t)=>s+parseFloat(t.amount),0))*100) : 0
+    suggs.push(`¿Gasto demasiado en ${topCat[0]}? Llevo ${topCat[1].toLocaleString('es-ES')} € (${pct}%)`)
+  }
+
+  // Sugerencias según modo y contexto fiscal
+  if(user?.mode === 'autonomo'){
+    const ivaEst = Math.round(income * 3 * 0.21)
+    suggs.push(`¿Cómo pago el mínimo legal de IVA? Este trimestre serían ~${ivaEst.toLocaleString('es-ES')} €`)
+    suggs.push('¿Qué gastos del mes puedo deducirme como autónomo?')
+  } else {
+    suggs.push('¿Me conviene hacer la declaración de la renta o es mejor que no la haga?')
+  }
+
+  // Análisis tendencia mes a mes
+  const thisM = getMonthlyStats(0)
+  const lastM = getMonthlyStats(-1)
+  if(lastM.totalGastos > 0 && thisM.totalGastos > lastM.totalGastos * 1.1){
+    const diff = Math.round(((thisM.totalGastos-lastM.totalGastos)/lastM.totalGastos)*100)
+    suggs.push(`Mis gastos subieron ${diff}% vs el mes pasado · ¿qué hago?`)
+  }
+
+  // Fondo de emergencia
+  if(income > 0 && expenses > 0){
+    const fundNeeded = expenses * 6
+    suggs.push(`¿Cómo creo mi fondo de emergencia de ${fundNeeded.toLocaleString('es-ES')} €?`)
+  }
+
+  // Inversión genérica si tiene ahorro
+  if(savRate >= 15) suggs.push('Dame un plan de inversión con fondos indexados paso a paso')
+
+  // Sin datos todavía
+  if(transactions.length === 0) suggs.unshift('Analiza mi perfil financiero y dime los 3 primeros pasos')
 
   return suggs.slice(0, 6)
 }
@@ -2696,7 +2815,13 @@ async function saveTransaction(){
   renderCategoryChart()
   renderPrediction()
   renderInsights()
+  renderMoneyHero()
+  checkAchievements()
   showToast('Movimiento guardado')
+  // Radiografía WOW: aparece la primera vez que el usuario llega a 3 movimientos
+  if(transactions.length === 3){
+    setTimeout(showRadiografia, 700)
+  }
 }
 
 // ─── ONBOARDING ──────────────────────────────────────────
@@ -3604,6 +3729,242 @@ function getNextFiscalDeadline(){
     }
   }
   return 'Modelo 303 Q4 · 20 enero ' + (y+1)
+}
+
+// ─── MONEY HERO ──────────────────────────────────────────
+function renderMoneyHero(){
+  const heroEl     = document.getElementById('money-hero')
+  const amountEl   = document.getElementById('money-hero-amount')
+  const subEl      = document.getElementById('money-hero-sub')
+  const predEl     = document.getElementById('money-hero-pred')
+  const barEl      = document.getElementById('money-hero-bar')
+  if(!heroEl || !amountEl) return
+
+  const income   = user?.income   || 0
+  const expenses = user?.expenses || 0
+  if(!income){ heroEl.style.display='none'; return }
+  heroEl.style.display='block'
+
+  const now         = new Date()
+  const daysPassed  = now.getDate()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
+  const daysLeft    = daysInMonth - daysPassed
+  const ratio       = daysPassed / daysInMonth
+
+  const gastosActuales = transactions.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const ingresosActuales = transactions.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+
+  // Disponible = ingresos declarados - gastos reales registrados
+  const disponible = income - gastosActuales
+  const proyeccion = ratio > 0.05 ? Math.round(gastosActuales / ratio) : expenses
+  const ahorroProyectado = income - proyeccion
+
+  amountEl.textContent = disponible.toLocaleString('es-ES') + ' €'
+  amountEl.style.color = disponible >= 0 ? '#fff' : '#f87171'
+
+  if(transactions.length === 0){
+    subEl.textContent = `Sin movimientos registrados · ${daysLeft} días para fin de mes`
+  } else {
+    const gDiario = gastosActuales / Math.max(1, daysPassed)
+    subEl.textContent = `Ritmo: ${Math.round(gDiario).toLocaleString('es-ES')} €/día · ${daysLeft} días restantes`
+  }
+
+  predEl.textContent = ahorroProyectado.toLocaleString('es-ES') + ' € ahorro previsto'
+  predEl.style.color = ahorroProyectado >= 0 ? '#4ade80' : '#f87171'
+
+  // Barra de gasto vs ingreso (% del mes consumido en gasto)
+  const pct = income > 0 ? Math.min(100, Math.round((gastosActuales/income)*100)) : 0
+  setTimeout(()=>{ if(barEl) barEl.style.width = pct + '%' }, 150)
+  if(barEl){
+    barEl.style.background = pct > 90 ? '#f87171' : pct > 70 ? '#fb923c' : 'linear-gradient(90deg,#c9a84c,#f5c842)'
+  }
+}
+
+// ─── STREAK ──────────────────────────────────────────────
+function renderStreak(){
+  const barEl    = document.getElementById('streak-bar')
+  const countEl  = document.getElementById('streak-count')
+  const subEl    = document.getElementById('streak-sub')
+  if(!barEl) return
+
+  const today    = new Date().toISOString().split('T')[0]
+  const lastDate = localStorage.getItem('pec_streak_date')
+  let streak     = parseInt(localStorage.getItem('pec_streak') || '0')
+
+  if(lastDate !== today){
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+    streak = lastDate === yesterday ? streak + 1 : 1
+    localStorage.setItem('pec_streak', streak)
+    localStorage.setItem('pec_streak_date', today)
+  }
+
+  if(streak < 2){ barEl.style.display='none'; return }
+  barEl.style.display='flex'
+  if(countEl) countEl.textContent = streak
+  if(subEl)   subEl.textContent   = streak === 1 ? 'Primer día activo' : `${streak} días seguidos en Pecunia`
+}
+
+// ─── ACHIEVEMENTS ─────────────────────────────────────────
+function showAchievement(icon, title, sub){
+  const pop   = document.getElementById('achievement-pop')
+  const iEl   = document.getElementById('achievement-icon')
+  const tEl   = document.getElementById('achievement-title')
+  const sEl   = document.getElementById('achievement-sub')
+  if(!pop) return
+  iEl.textContent = icon
+  tEl.textContent = title
+  sEl.textContent = sub
+  pop.classList.add('on')
+  setTimeout(()=>pop.classList.remove('on'), 3500)
+}
+
+function checkAchievements(){
+  const key      = 'pec_achievements'
+  const unlocked = JSON.parse(localStorage.getItem(key) || '[]')
+  const unlock   = (id, icon, title, sub) => {
+    if(unlocked.includes(id)) return
+    unlocked.push(id)
+    localStorage.setItem(key, JSON.stringify(unlocked))
+    setTimeout(()=>showAchievement(icon, title, sub), 800)
+  }
+
+  const count = transactions.length
+  if(count >= 1)  unlock('first_tx',   '📝', '¡Primer movimiento!',     'Bienvenido al control de tus finanzas')
+  if(count >= 5)  unlock('five_tx',    '🚀', '5 movimientos registrados', 'Ya tienes datos para analizar')
+  if(count >= 20) unlock('twenty_tx',  '🎯', '¡20 movimientos!',         'Eres un maestro del seguimiento')
+  if(count >= 50) unlock('fifty_tx',   '🏆', '¡50 movimientos!',         'Nivel experto en control financiero')
+
+  const income = user?.income || 0
+  const expenses = user?.expenses || 0
+  const savRate = income > 0 ? (income - expenses) / income : 0
+  if(savRate >= 0.20) unlock('saving_20', '💰', '¡Tasa de ahorro 20%+!', 'Estás por encima del estándar recomendado')
+  if(savRate >= 0.30) unlock('saving_30', '🌟', '¡Ahorrando el 30%+!',   'Nivel élite de gestión financiera')
+
+  const subs = detectSubscriptions()
+  if(subs.length >= 2) unlock('subs_detected', '🔍', 'Suscripciones detectadas', `Encontramos ${subs.length} pagos recurrentes`)
+
+  const hs = calcHealthScore().total
+  if(hs >= 70) unlock('health_70', '❤️', '¡Salud financiera buena!', `Puntuación ${hs}/100`)
+  if(hs >= 90) unlock('health_90', '💎', '¡Salud financiera excelente!', `Puntuación ${hs}/100 — top 5%`)
+}
+
+// ─── RADIOGRAFÍA FINANCIERA (función WOW) ────────────────
+function showRadiografia(){
+  const modal = document.getElementById('radiografia-modal')
+  const body  = document.getElementById('radiografia-body')
+  if(!modal || !body) return
+
+  const income   = user?.income   || 0
+  const expenses = user?.expenses || 0
+  const gastos   = transactions.filter(t=>t.type==='gasto')
+  const ingresos = transactions.filter(t=>t.type==='ingreso')
+  const totalG   = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalI   = ingresos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const savRate  = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
+
+  // Categoría top
+  const catTotals = {}
+  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0]
+
+  // Suscripciones
+  const subs = detectSubscriptions()
+  const subsTotal = subs.reduce((s,x)=>s+x.total,0)
+
+  // Proyección mes
+  const now         = new Date()
+  const daysPassed  = now.getDate()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
+  const ratio       = daysPassed / daysInMonth
+  const proyeccion  = ratio > 0.05 ? Math.round(totalG / ratio) : expenses
+  const ahorroProy  = income - proyeccion
+
+  // Fondo emergencia
+  const monthlyExp  = expenses || totalG
+  const fundNeeded  = monthlyExp * 6
+  const mesesFondo  = monthlyExp > 0 && (income - expenses) > 0 ? Math.ceil(fundNeeded / (income - expenses)) : null
+
+  const items = []
+
+  // Estado de ahorro
+  const savIcon = savRate >= 20 ? '✅' : savRate >= 10 ? '⚠️' : '🔴'
+  items.push({
+    icon: savIcon,
+    label: 'Tasa de ahorro',
+    value: `${savRate}% ${savRate >= 20 ? '— ¡Por encima del objetivo!' : savRate >= 10 ? '— Por debajo del 20% recomendado' : '— Acción urgente necesaria'}`,
+    sub: `Ingresos: ${income.toLocaleString('es-ES')} € · Gastos declarados: ${expenses.toLocaleString('es-ES')} €`
+  })
+
+  // Categoría top
+  if(topCat){
+    const pct = totalG > 0 ? Math.round((topCat[1]/totalG)*100) : 0
+    items.push({
+      icon: '📊',
+      label: 'Mayor gasto detectado',
+      value: `${topCat[0]}: ${topCat[1].toLocaleString('es-ES')} € (${pct}% del total)`,
+      sub: pct > 40 ? `⚠️ Concentrar más del 40% en una categoría es un riesgo` : `Dentro de un rango saludable`
+    })
+  }
+
+  // Suscripciones
+  if(subs.length >= 1){
+    items.push({
+      icon: '🔄',
+      label: 'Pagos recurrentes detectados',
+      value: `${subs.length} suscripción${subs.length>1?'es':''} · ${subsTotal.toLocaleString('es-ES')} € en total`,
+      sub: subs.slice(0,2).map(s=>`"${s.name}" ${s.avgAmount}€`).join(' · ') + (subs.length>2?'…':'')
+    })
+  }
+
+  // Proyección
+  if(income > 0){
+    items.push({
+      icon: ahorroProy >= 0 ? '📈' : '📉',
+      label: 'Proyección fin de mes',
+      value: `Ahorro previsto: ${ahorroProy.toLocaleString('es-ES')} €`,
+      sub: `A este ritmo gastarás ${proyeccion.toLocaleString('es-ES')} € este mes`
+    })
+  }
+
+  // Fondo emergencia
+  if(monthlyExp > 0){
+    items.push({
+      icon: '🛡️',
+      label: 'Fondo de emergencia recomendado',
+      value: `${fundNeeded.toLocaleString('es-ES')} € (6 meses de gastos)`,
+      sub: mesesFondo ? `A tu ritmo de ahorro actual lo tendrías en ${mesesFondo} meses` : 'Prioridad #1 antes de invertir'
+    })
+  }
+
+  // Consejo fiscal si autónomo
+  if(user?.mode === 'autonomo' && income > 0){
+    const ivaReserva = Math.round(income * 0.21)
+    items.push({
+      icon: '🧾',
+      label: 'Reserva fiscal mensual recomendada',
+      value: `${ivaReserva.toLocaleString('es-ES')} €/mes para IVA + IRPF`,
+      sub: 'Sepáralo en una cuenta aparte para evitar sorpresas al liquidar'
+    })
+  }
+
+  body.innerHTML = items.map(i=>`
+    <div class="rx-item">
+      <div class="rx-icon">${i.icon}</div>
+      <div class="rx-content">
+        <div class="rx-label">${i.label}</div>
+        <div class="rx-value">${i.value}</div>
+        ${i.sub ? `<div class="rx-sub">${i.sub}</div>` : ''}
+      </div>
+    </div>
+  `).join('') + `<button class="rx-close" onclick="closeRadiografia()">Entendido · Ver mi dashboard</button>`
+
+  modal.classList.add('on')
+  // Marcar como visto para no repetir
+  localStorage.setItem('pec_rx_shown', '1')
+}
+
+function closeRadiografia(){
+  document.getElementById('radiografia-modal').classList.remove('on')
 }
 
 // ─── INIT ─────────────────────────────────────────────────
