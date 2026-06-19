@@ -287,15 +287,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 .status-space{height:var(--safe-top);min-height:44px;background:var(--dark);flex-shrink:0}
 
 /* TOPBAR */
-.topbar{background:var(--dark);padding:4px 20px 24px;flex-shrink:0;position:relative;overflow:hidden}
-.topbar::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,.12) 0%,transparent 70%);pointer-events:none}
-.topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.topbar-greeting{font-size:13px;color:#6b7280;font-weight:500}
-.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--dark3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold-light);border:1.5px solid #333;cursor:pointer}
-.topbar-label{font-size:10px;color:#4b5563;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.topbar-balance{font-size:44px;font-weight:800;color:#fff;line-height:1;letter-spacing:-2px;margin-bottom:8px}
-.topbar-change{font-size:12px;color:#4ade80;font-weight:600;display:flex;align-items:center;gap:4px}
-.plan-chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:10px;letter-spacing:.3px}
+.topbar{background:var(--dark);padding:10px 20px 16px;flex-shrink:0;position:relative;overflow:hidden}
+.topbar::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 70%);pointer-events:none}
+.topbar-row{display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;flex-direction:column;gap:2px}
+.topbar-greeting{font-size:14px;color:#fff;font-weight:700;letter-spacing:-.2px}
+.topbar-sub{font-size:11px;color:#6b7280;font-weight:500}
+.topbar-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2a2a2a,#1a1a1a);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold-light);border:1.5px solid #333;cursor:pointer;flex-shrink:0}
+.topbar-balance{display:none}
+.topbar-label{display:none}
+.topbar-change{display:none}
+.plan-chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:8px;letter-spacing:.3px}
 .chip-free{background:#1a1a1a;color:#6b7280}
 .chip-pro{background:rgba(201,168,76,.15);color:var(--gold-light);border:1px solid rgba(201,168,76,.3)}
 .chip-fin{background:rgba(201,168,76,.2);color:var(--gold-light);border:1px solid rgba(201,168,76,.4)}
@@ -741,6 +743,46 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 .faq-q{font-size:13px;font-weight:600;margin-bottom:6px;cursor:pointer}
 .faq-a{font-size:12px;color:var(--text2);line-height:1.7}
 
+/* ─── AUTO-INSIGHTS ENGINE ─────────────────────────── */
+.insights-engine{background:var(--dark);border-radius:var(--r);padding:0;margin-bottom:12px;overflow:hidden;border:1px solid #222}
+.insights-engine-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0}
+.insights-engine-title{font-size:11px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
+.insights-engine-dot{width:6px;height:6px;background:#4ade80;border-radius:50%;animation:pulse 2.5s infinite;box-shadow:0 0 5px rgba(74,222,128,.5)}
+.insights-engine-link{font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+.insight-row{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid #1a1a1a;align-items:flex-start;cursor:pointer;transition:background .15s}
+.insight-row:last-child{border:none}
+.insight-row:active{background:#111}
+.insight-row-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.insight-row-icon.green{background:rgba(74,222,128,.12)}
+.insight-row-icon.amber{background:rgba(251,191,36,.12)}
+.insight-row-icon.red{background:rgba(248,113,113,.12)}
+.insight-row-icon.blue{background:rgba(96,165,250,.12)}
+.insight-row-icon.gold{background:rgba(201,168,76,.12)}
+.insight-row-body{flex:1;min-width:0}
+.insight-row-label{font-size:10px;font-weight:700;color:#4b5563;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.insight-row-title{font-size:13px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:2px}
+.insight-row-sub{font-size:11px;color:#6b7280;line-height:1.4}
+.insight-row-val{font-size:14px;font-weight:800;flex-shrink:0;text-align:right}
+.insight-row-val.pos{color:#4ade80}
+.insight-row-val.neg{color:#f87171}
+.insight-row-val.gold{color:var(--gold-light)}
+.insight-row-val.neutral{color:#9ca3af}
+.insights-engine-footer{padding:12px 16px;border-top:1px solid #1a1a1a;display:flex;align-items:center;gap:8px}
+.insights-ask-btn{flex:1;background:#141414;border:1px solid #2d2d2d;border-radius:12px;padding:10px 14px;font-size:13px;color:#6b7280;text-align:left;cursor:pointer;font-family:inherit;transition:all .2s}
+.insights-ask-btn:focus,.insights-ask-btn:active{border-color:var(--gold);color:#fff;outline:none}
+.insights-send-btn{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.insights-send-btn svg{width:14px;height:14px;stroke:var(--dark);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ─── SECTION REORDER ───────────────────────────────── */
+.month-summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.ms-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:12px 10px;text-align:center}
+.ms-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px}
+.ms-val{font-size:17px;font-weight:800;letter-spacing:-.5px;line-height:1}
+
+/* ─── NAV INDICATOR ─────────────────────────────────── */
+.nav-indicator{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto;display:none}
+.nav-btn.active .nav-indicator{display:block}
+
 /* ─── RADIOGRAFÍA WOW ──────────────────────────────── */
 #radiografia-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
 #radiografia-modal.on{display:flex}
@@ -980,13 +1022,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
   <div class="status-space"></div>
   <div class="topbar" id="main-topbar">
     <div class="topbar-row">
-      <div class="topbar-greeting" id="tb-greeting">Buenas tardes</div>
-      <div class="topbar-avatar" id="tb-avatar" onclick="goTo('perfil')">--</div>
+      <div class="topbar-left">
+        <div class="topbar-greeting" id="tb-greeting">Buenos días</div>
+        <div class="topbar-sub" id="tb-month">junio 2026</div>
+      </div>
+      <div class="topbar-avatar" id="tb-avatar" onclick="goTo('perfil',document.querySelectorAll('.nav-btn')[4])">P</div>
     </div>
-    <div class="topbar-label">BENEFICIO NETO · <span id="tb-month"></span></div>
-    <div class="topbar-balance" id="tb-balance">0 €</div>
-    <div class="topbar-change" id="tb-change">Tasa de ahorro: 0%</div>
-    <div class="plan-chip chip-free" id="tb-plan-chip">Plan Gratuito · 5 preguntas/día</div>
+    <div class="plan-chip chip-free" id="tb-plan-chip">Plan Gratuito</div>
+    <div class="topbar-balance" id="tb-balance" style="display:none">0 €</div>
+    <div class="topbar-change" id="tb-change" style="display:none"></div>
   </div>
 
   <div class="scroll" id="main-scroll">
@@ -1023,6 +1067,40 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
           </div>
         </div>
 
+        <!-- Resumen mensual (3 cols) -->
+        <div class="month-summary-row" id="month-summary-row">
+          <div class="ms-card"><div class="ms-label">Ingresos</div><div class="ms-val pos" id="st-income">— €</div></div>
+          <div class="ms-card"><div class="ms-label">Gastos</div><div class="ms-val neg" id="st-expenses">— €</div></div>
+          <div class="ms-card"><div class="ms-label">Ahorro</div><div class="ms-val" id="st-benefit">— €</div></div>
+        </div>
+
+        <!-- AUTO-INSIGHTS ENGINE -->
+        <div class="insights-engine" id="insights-engine">
+          <div class="insights-engine-head">
+            <div class="insights-engine-title">
+              <div class="insights-engine-dot"></div>
+              Análisis IA
+            </div>
+            <button class="insights-engine-link" onclick="goTo('asesor',document.querySelectorAll('.nav-btn')[1])">Ver todo →</button>
+          </div>
+          <div id="auto-insights-list">
+            <div class="insight-row">
+              <div class="insight-row-icon gold">💡</div>
+              <div class="insight-row-body">
+                <div class="insight-row-label">Pecunia IA</div>
+                <div class="insight-row-title">Añade tus primeros movimientos</div>
+                <div class="insight-row-sub">Con 3+ datos te genero un análisis completo automáticamente</div>
+              </div>
+            </div>
+          </div>
+          <div class="insights-engine-footer">
+            <input class="insights-ask-btn" id="home-inp" placeholder="Pregunta a tu asesor financiero..." onkeydown="if(event.key==='Enter')sendHomeMsg()" readonly onclick="goTo('asesor',document.querySelectorAll('.nav-btn')[1])">
+            <button class="insights-send-btn" onclick="goTo('asesor',document.querySelectorAll('.nav-btn')[1])">
+              <svg viewBox="0 0 16 16"><path d="M14 8H2M14 8l-5-5M14 8l-5 5"/></svg>
+            </button>
+          </div>
+        </div>
+
         <!-- Health Score -->
         <div class="health-card" id="health-card">
           <div class="health-label">Salud financiera</div>
@@ -1032,59 +1110,20 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
               <div class="health-score-num" id="health-num">—</div>
             </div>
             <div class="health-details">
-              <div class="health-status" id="health-status">Calculando...</div>
-              <div class="health-sub" id="health-sub">Añade movimientos para ver tu puntuación</div>
+              <div class="health-status" id="health-status">Sin datos aún</div>
+              <div class="health-sub" id="health-sub">Añade movimientos para calcular</div>
             </div>
           </div>
           <div class="health-bars" id="health-bars"></div>
         </div>
 
-        <!-- Smart Alerts -->
-        <div id="smart-alerts"></div>
-
-        <!-- Stats grid -->
-        <div class="stat-grid" id="stat-grid-inicio">
-          <div class="stat-card"><div class="stat-label">Ingresos este mes</div><div class="stat-value pos" id="st-income">0 €</div></div>
-          <div class="stat-card"><div class="stat-label">Gastos este mes</div><div class="stat-value" id="st-expenses">0 €</div></div>
-          <div class="stat-card"><div class="stat-label">Beneficio neto</div><div class="stat-value" id="st-benefit">0 €</div></div>
-          <div class="stat-card"><div class="stat-label">Tasa de ahorro</div><div class="stat-value pos" id="st-savrate">0%</div></div>
-        </div>
-
-        <!-- AI Widget -->
-        <div class="ai-widget">
-          <div class="ai-widget-header">
-            <div class="ai-badge"><div class="ai-dot"></div><span>Pecunia IA</span></div>
-            <div class="ai-limit-tag" id="home-ai-tag">5 preguntas hoy</div>
-          </div>
-          <div class="ai-message" id="home-ai-bubble">Cargando tu resumen financiero...</div>
-          <div class="ai-input-row">
-            <input class="ai-input" id="home-inp" placeholder="Pregunta algo rápido..." onkeydown="if(event.key==='Enter')sendHomeMsg()">
-            <button class="ai-send" onclick="sendHomeMsg()"><svg viewBox="0 0 16 16"><path d="M14 8H2M14 8l-5-5M14 8l-5 5"/></svg></button>
-          </div>
-        </div>
-
-        <!-- Insights IA -->
-        <div id="insights-card" style="display:none" class="insight-card">
-          <div class="insight-header">
-            <div class="insight-icon"><svg viewBox="0 0 15 15"><path d="M7.5 1a6.5 6.5 0 1 0 0 13A6.5 6.5 0 0 0 7.5 1zM7.5 4v4l2.5 2.5"/></svg></div>
-            <div class="insight-title">Análisis IA de tus finanzas</div>
-          </div>
-          <div id="insights-list"></div>
-        </div>
-
-        <!-- Category Chart -->
+        <!-- Categorías -->
         <div class="card card-pad" id="cat-chart-card" style="display:none">
           <div class="card-head"><div class="card-title">Gastos por categoría</div><span class="card-link" id="cat-total"></span></div>
           <div class="cat-chart" id="cat-chart"></div>
         </div>
 
-        <!-- Prediction -->
-        <div class="card card-pad" id="pred-card" style="display:none">
-          <div class="card-head"><div class="card-title">Predicción este mes</div></div>
-          <div id="pred-rows"></div>
-        </div>
-
-        <!-- Goals -->
+        <!-- Objetivos -->
         <div class="goal-card" id="goals-card" style="display:none">
           <div class="goal-card-head">
             <div class="card-title">Mis objetivos</div>
@@ -1093,10 +1132,20 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
           <div id="goals-list"></div>
         </div>
 
-        <!-- Recent transactions -->
+        <!-- Movimientos recientes -->
         <div class="card card-pad">
-          <div class="card-head"><div class="card-title">Movimientos recientes</div><span class="card-link" onclick="goTo('finanzas')">Ver todos</span></div>
-          <div id="tx-list-home"><div style="font-size:13px;color:var(--text2);text-align:center;padding:16px 0">Aún no hay movimientos.<br>Añade el primero con el botón +</div></div>
+          <div class="card-head"><div class="card-title">Movimientos recientes</div><span class="card-link" onclick="goTo('finanzas',document.querySelectorAll('.nav-btn')[2])">Ver todos</span></div>
+          <div id="tx-list-home"><div style="font-size:13px;color:var(--text2);text-align:center;padding:20px 0;line-height:1.7">Aún no tienes movimientos.<br><span style="color:var(--gold);font-weight:600;cursor:pointer" onclick="openAddModal()">Añade el primero →</span></div></div>
+        </div>
+
+        <!-- Hidden elements referenced by JS (fuera de la vista) -->
+        <div style="display:none">
+          <div id="smart-alerts"></div>
+          <div id="insights-card"><div id="insights-list"></div></div>
+          <div id="pred-card"><div id="pred-rows"></div></div>
+          <div id="st-savrate"></div>
+          <div id="home-ai-bubble"></div>
+          <div id="home-ai-tag"></div>
         </div>
       </div>
 
@@ -1622,17 +1671,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
       <svg viewBox="0 0 22 22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span class="nb-label">IA</span>
     </button>
-    <button class="nav-btn" onclick="goTo('fiscal',this)">
-      <svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="16" rx="2"/><path d="M7 8h8M7 12h8M7 16h5"/></svg>
-      <span class="nb-label">Fiscal</span>
-    </button>
     <button class="nav-btn" onclick="goTo('finanzas',this)">
       <svg viewBox="0 0 22 22"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       <span class="nb-label">Finanzas</span>
     </button>
-    <button class="nav-btn" onclick="goTo('edu',this)">
-      <svg viewBox="0 0 22 22"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span class="nb-label">Aprender</span>
+    <button class="nav-btn" onclick="goTo('fiscal',this)">
+      <svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="16" rx="2"/><path d="M7 8h8M7 12h8M7 16h5"/></svg>
+      <span class="nb-label">Fiscal</span>
+    </button>
+    <button class="nav-btn" onclick="goTo('perfil',this)">
+      <svg viewBox="0 0 22 22"><circle cx="11" cy="7" r="4"/><path d="M2 20c0-4.4 4-8 9-8s9 3.6 9 8"/></svg>
+      <span class="nb-label">Perfil</span>
     </button>
   </nav>
 </div>
@@ -2114,11 +2163,11 @@ async function enterApp(){
 function initDashboard(){
   const now = new Date()
   const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
-  document.getElementById('tb-month').textContent = months[now.getMonth()].toUpperCase()+' '+now.getFullYear()
-
   const hour = now.getHours()
   const gr = hour<12?'Buenos días':hour<18?'Buenas tardes':'Buenas noches'
   document.getElementById('tb-greeting').textContent = gr + ', ' + user.name.split(' ')[0]
+  const tbMonthEl = document.getElementById('tb-month')
+  if(tbMonthEl) tbMonthEl.textContent = months[now.getMonth()] + ' ' + now.getFullYear()
 
   const initials = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
   document.getElementById('tb-avatar').textContent = initials
@@ -2264,6 +2313,7 @@ function initDashboard(){
   renderInsights()
   renderMoneyHero()
   renderStreak()
+  renderAutoInsights()
 
   // Chat welcome personalizado
   const savRate2 = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
@@ -2348,8 +2398,9 @@ function renderTxList(){
 const SECS = ['inicio','asesor','fiscal','finanzas','edu','perfil','planes']
 
 function goTo(id, btn){
-  SECS.forEach(s=>document.getElementById('sec-'+s).classList.remove('on'))
-  document.getElementById('sec-'+id).classList.add('on')
+  SECS.forEach(s=>{ const el=document.getElementById('sec-'+s); if(el) el.classList.remove('on') })
+  const target = document.getElementById('sec-'+id)
+  if(target) target.classList.add('on')
   if(btn){
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))
     btn.classList.add('active')
@@ -2816,6 +2867,7 @@ async function saveTransaction(){
   renderPrediction()
   renderInsights()
   renderMoneyHero()
+  renderAutoInsights()
   checkAchievements()
   showToast('Movimiento guardado')
   // Radiografía WOW: aparece la primera vez que el usuario llega a 3 movimientos
@@ -3705,6 +3757,8 @@ async function deleteTransaction(id){
   renderCategoryChart()
   renderPrediction()
   renderInsights()
+  renderMoneyHero()
+  renderAutoInsights()
   showToast('Movimiento eliminado')
 }
 
@@ -3729,6 +3783,153 @@ function getNextFiscalDeadline(){
     }
   }
   return 'Modelo 303 Q4 · 20 enero ' + (y+1)
+}
+
+// ─── AUTO-INSIGHTS ENGINE ────────────────────────────────
+function renderAutoInsights(){
+  const list = document.getElementById('auto-insights-list')
+  if(!list) return
+  const income   = user?.income   || 0
+  const expenses = user?.expenses || 0
+  const savRate  = income > 0 ? Math.round(((income-expenses)/income)*100) : 0
+  const gastos   = transactions.filter(t=>t.type==='gasto')
+  const ingresos = transactions.filter(t=>t.type==='ingreso')
+  const totalG   = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalI   = ingresos.reduce((s,t)=>s+parseFloat(t.amount),0)
+
+  const now         = new Date()
+  const daysPassed  = now.getDate()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
+  const daysLeft    = daysInMonth - daysPassed
+  const ratio       = daysPassed / daysInMonth
+  const proyeccion  = ratio > 0.05 && totalG > 0 ? Math.round(totalG / ratio) : expenses
+  const ahorroProyectado = income - proyeccion
+
+  const catTotals = {}
+  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const topCat    = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0]
+  const subs      = detectSubscriptions()
+  const thisMonth = getMonthlyStats(0)
+  const lastMonth = getMonthlyStats(-1)
+
+  const items = []
+
+  if(transactions.length === 0){
+    items.push({
+      icon:'💡', color:'gold',
+      label:'Por dónde empezar',
+      title:'Añade tus primeros movimientos',
+      sub:'Con solo 3 datos te genero un diagnóstico financiero completo',
+      val: null,
+      action: ()=>openAddModal()
+    })
+    items.push({
+      icon:'🎯', color:'blue',
+      label:'Tu objetivo',
+      title: income > 0 ? `Meta de ahorro: ${Math.round(income*0.2).toLocaleString('es-ES')} €/mes` : 'Configura tus ingresos',
+      sub: income > 0 ? `Regla 50/30/20 aplicada a tus ${income.toLocaleString('es-ES')} €/mes` : 'Ve a Perfil → editar para configurarlo',
+      val: null,
+      action: ()=>{}
+    })
+  } else {
+    // Insight 1: Ahorro / tendencia
+    if(savRate >= 20){
+      items.push({
+        icon:'✅', color:'green',
+        label:'Tasa de ahorro',
+        title:`Estás ahorrando el ${savRate}% — por encima del objetivo`,
+        sub:`${(income-expenses).toLocaleString('es-ES')} €/mes disponibles · considera invertir el excedente`,
+        val:`${savRate}%`, valClass:'pos',
+        action: ()=>askAI(`Ahorro el ${savRate}% de mis ingresos. ¿Dónde debería invertir?`)
+      })
+    } else if(income > 0){
+      const falta = Math.round(income*0.2) - (income-expenses)
+      items.push({
+        icon:'⚠️', color:'amber',
+        label:'Tasa de ahorro',
+        title:`Solo ahorras el ${savRate}% — el objetivo es el 20%`,
+        sub:`Faltan ${falta > 0 ? falta.toLocaleString('es-ES')+' €/mes' : '0 €'} para alcanzar el mínimo recomendado`,
+        val:`${savRate}%`, valClass:'neg',
+        action: ()=>askAI(`Solo ahorro el ${savRate}%. Dame un plan concreto para llegar al 20%`)
+      })
+    }
+
+    // Insight 2: Proyección o tendencia mes
+    if(totalG > 0 && income > 0){
+      const esRiesgo = proyeccion > income
+      items.push({
+        icon: esRiesgo ? '📉' : '📈', color: esRiesgo ? 'red' : 'green',
+        label:'Proyección fin de mes',
+        title: esRiesgo
+          ? `Alerta: gastarás más de lo que ingresas`
+          : `Vas bien — ahorro previsto ${ahorroProyectado.toLocaleString('es-ES')} €`,
+        sub:`A este ritmo gastarás ${proyeccion.toLocaleString('es-ES')} € · quedan ${daysLeft} días`,
+        val: ahorroProyectado.toLocaleString('es-ES')+'€', valClass: ahorroProyectado >= 0 ? 'pos' : 'neg',
+        action: ()=>askAI('Dame un análisis de mi proyección de gastos para fin de mes')
+      })
+    }
+
+    // Insight 3: Top categoría o suscripciones
+    if(subs.length >= 2){
+      const subsTotal = subs.reduce((s,x)=>s+x.total, 0)
+      items.push({
+        icon:'🔄', color:'amber',
+        label:'Pagos recurrentes',
+        title:`${subs.length} suscripciones detectadas — ${subsTotal.toLocaleString('es-ES')} € en total`,
+        sub:subs.slice(0,2).map(s=>`"${s.name}" ${s.avgAmount}€`).join(' · ')+(subs.length>2?` +${subs.length-2} más`:''),
+        val:`${subsTotal.toLocaleString('es-ES')}€`, valClass:'neg',
+        action: ()=>askAI(`Detecté ${subs.length} suscripciones. ¿Cuáles debería cancelar?`)
+      })
+    } else if(topCat && totalG > 0){
+      const pct = Math.round((topCat[1]/totalG)*100)
+      const esExcesivo = pct > 40
+      items.push({
+        icon: esExcesivo ? '🔍' : '📊', color: esExcesivo ? 'amber' : 'blue',
+        label:'Mayor categoría de gasto',
+        title:`${topCat[0]}: ${pct}% de todos tus gastos`,
+        sub:`${topCat[1].toLocaleString('es-ES')} € · ${esExcesivo ? 'por encima del 40% — revisa si puedes reducirlo' : 'dentro de un rango saludable'}`,
+        val:`${topCat[1].toLocaleString('es-ES')}€`, valClass: esExcesivo ? 'neg' : 'neutral',
+        action: ()=>askAI(`He gastado ${topCat[1].toLocaleString('es-ES')} € en ${topCat[0]} (${pct}% del total). ¿Es demasiado?`)
+      })
+    }
+
+    // Insight 4: fiscal (autónomos) o fondo emergencia
+    if(user?.mode === 'autonomo' && income > 0){
+      const ivaMes = Math.round(income * 0.21)
+      items.push({
+        icon:'🧾', color:'gold',
+        label:'Reserva fiscal · Autónomo',
+        title:`Reserva ${ivaMes.toLocaleString('es-ES')} €/mes para IVA + IRPF`,
+        sub:`Próximo vencimiento: ${getNextFiscalDeadline().split('·')[0].trim()}`,
+        val:null,
+        action: ()=>goTo('fiscal', document.querySelectorAll('.nav-btn')[3])
+      })
+    } else if(income > 0 && expenses > 0){
+      const fundNeeded = expenses * 6
+      items.push({
+        icon:'🛡️', color:'blue',
+        label:'Fondo de emergencia',
+        title:`Objetivo: ${fundNeeded.toLocaleString('es-ES')} € (6 meses gastos)`,
+        sub: (income-expenses) > 0
+          ? `A tu ritmo lo alcanzas en ${Math.ceil(fundNeeded/(income-expenses))} meses`
+          : 'Prioridad #1 antes de invertir',
+        val:null,
+        action: ()=>askAI('¿Cómo creo mi fondo de emergencia lo antes posible?')
+      })
+    }
+  }
+
+  list.innerHTML = items.slice(0,3).map(item => `
+    <div class="insight-row" onclick="(${item.action.toString()})()">
+      <div class="insight-row-icon ${item.color}">${item.icon}</div>
+      <div class="insight-row-body">
+        <div class="insight-row-label">${item.label}</div>
+        <div class="insight-row-title">${item.title}</div>
+        ${item.sub ? `<div class="insight-row-sub">${item.sub}</div>` : ''}
+      </div>
+      ${item.val ? `<div class="insight-row-val ${item.valClass||''}">${item.val}</div>` : ''}
+    </div>
+  `).join('')
 }
 
 // ─── MONEY HERO ──────────────────────────────────────────
