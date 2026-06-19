@@ -2634,43 +2634,26 @@ async function speakText(text, onEnd){
   }
 }
 
-let interruptRecognition = null
-function startInterruptListener(){
-  if(!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) return
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition
-  interruptRecognition = new SR()
-  interruptRecognition.lang = 'es-ES'
-  interruptRecognition.continuous = false
-  interruptRecognition.interimResults = true
-  interruptRecognition.onresult = ()=>{
-    // User spoke — interrupt Pecunia
-    if(currentAudio){ currentAudio.pause(); currentAudio=null }
-    window.speechSynthesis.cancel()
-    voiceSpeaking = false
-    setCallRings(false)
-    stopInterruptListener()
-    setCallStatus('Escuchando...')
-    startListening()
-  }
-  try{ interruptRecognition.start() }catch(e){}
-}
-function stopInterruptListener(){
-  if(interruptRecognition){ try{ interruptRecognition.stop() }catch(e){} interruptRecognition=null }
-}
+function startInterruptListener(){}
+function stopInterruptListener(){}
 
 function startListening(){
-  if(!voiceActive || micMuted || voiceSpeaking) return
+  if(!voiceActive || micMuted) return
+  if(voiceRecognition){ try{ voiceRecognition.stop() }catch(e){} voiceRecognition=null }
+
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition
   voiceRecognition = new SR()
   voiceRecognition.lang = 'es-ES'
-  voiceRecognition.continuous = false
+  voiceRecognition.continuous = true   // always listening — handles both interrupt and normal input
   voiceRecognition.interimResults = true
 
   const micBtn = document.getElementById('call-mic-btn')
-  micBtn.classList.add('listening')
-  setCallStatus('Escuchando...')
+  if(!voiceSpeaking) micBtn.classList.add('listening')
+  setCallStatus(voiceSpeaking ? 'Pecunia está hablando...' : 'Escuchando...')
 
   let finalTranscript = ''
+  let processingPause = null
+
   voiceRecognition.onresult = (e)=>{
     let interim = ''
     finalTranscript = ''
@@ -2678,37 +2661,74 @@ function startListening(){
       if(e.results[i].isFinal) finalTranscript += e.results[i][0].transcript
       else interim += e.results[i][0].transcript
     }
-    showCallTranscript('Tú', finalTranscript || interim)
+    const speech = finalTranscript || interim
+    if(!speech.trim()) return
+
+    // If Pecunia is speaking → interrupt immediately
+    if(voiceSpeaking){
+      if(currentAudio){ currentAudio.pause(); currentAudio=null }
+      window.speechSynthesis.cancel()
+      voiceSpeaking = false
+      setCallRings(false)
+      micBtn.classList.add('listening')
+      setCallStatus('Escuchando...')
+    }
+
+    showCallTranscript('Tú', speech)
+
+    // Debounce: wait 900ms of silence after last word before sending
+    clearTimeout(processingPause)
+    if(finalTranscript.trim()){
+      processingPause = setTimeout(()=>{
+        const msg = finalTranscript.trim()
+        finalTranscript = ''
+        processVoiceMessage(msg)
+      }, 900)
+    }
   }
 
   voiceRecognition.onend = ()=>{
     micBtn.classList.remove('listening')
-    if(finalTranscript.trim() && voiceActive) processVoiceMessage(finalTranscript.trim())
-    else if(voiceActive && !micMuted && !voiceSpeaking) startListening()
+    // Auto-restart if still in call (continuous mode sometimes stops)
+    if(voiceActive && !micMuted) setTimeout(startListening, 300)
   }
 
   voiceRecognition.onerror = (e)=>{
+    if(e.error === 'no-speech' && voiceActive && !micMuted) return // ignore, auto-restarts
     micBtn.classList.remove('listening')
-    if(e.error === 'no-speech' && voiceActive && !micMuted) startListening()
   }
 
   try{ voiceRecognition.start() }catch(e){}
 }
 
 async function processVoiceMessage(text){
+  if(!voiceActive || !text.trim()) return
   setCallStatus('Pecunia está pensando...')
-  showCallTranscript('Tú', text)
-  // Also add to chat history for context
+  if(voiceRecognition){ try{ voiceRecognition.stop() }catch(e){} voiceRecognition=null }
+
   const msgs = document.getElementById('chat-msgs')
   appendBubble(msgs,'user',text)
+
   try{
-    const reply = await callAI(text)
+    // Fast voice prompt — minimal context, short answer enforced
+    const income  = user?.income  || 0
+    const expenses= user?.expenses|| 0
+    const txCount = transactions.length
+    const topGasto= (()=>{ const c={}; transactions.filter(t=>t.type==='gasto').forEach(t=>{ c[t.cat]=(c[t.cat]||0)+parseFloat(t.amount) }); const s=Object.entries(c).sort((a,b)=>b[1]-a[1])[0]; return s?`${s[0]} ${s[1]}€`:'sin datos' })()
+    const voiceSystemPrompt = `Eres Pecunia, gestora financiera personal de ${user?.name?.split(' ')[0]||''}. Hablas por teléfono con tu cliente. Responde en UNA o DOS frases cortas y naturales, como en una llamada real. Sin listas, sin datos técnicos, sin asteriscos. Contexto rápido: ingresos ${income}€/mes, gastos ${expenses}€/mes, ${txCount} movimientos, mayor gasto: ${topGasto}. Si no tienes datos suficientes, pregunta algo concreto.`
+
+    chatHistory.push({ role:'user', content:text })
+    const msgs_ai = [{ role:'system', content:voiceSystemPrompt }, ...chatHistory.slice(-8)]
+    const res = await puter.ai.chat(msgs_ai, { model:'gpt-4o-mini' })
+    const reply = res?.message?.content || res?.text || String(res)
+    chatHistory.push({ role:'assistant', content:reply })
+
     appendBubble(msgs,'ai',reply)
     showCallTranscript('Pecunia', reply)
     speakText(reply)
   } catch(e){
-    setCallStatus('Error de conexión')
-    if(voiceActive && !micMuted) setTimeout(startListening, 2000)
+    setCallStatus('Error · reintentando...')
+    if(voiceActive && !micMuted) setTimeout(startListening, 1500)
   }
 }
 
