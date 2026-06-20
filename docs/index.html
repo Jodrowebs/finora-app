@@ -669,6 +669,96 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
 @keyframes td{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
 /* HEALTH SCORE */
+/* ── CENTRO DE INTELIGENCIA FINANCIERA ── */
+.intel-center{background:linear-gradient(135deg,#0a0a0a 0%,#111 50%,#0d0d0d 100%);border:1px solid rgba(201,168,76,.25);border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.intel-center::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(201,168,76,.08) 0%,transparent 60%);pointer-events:none}
+.intel-center-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.intel-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.8px}
+.intel-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:pulse 2.5s infinite}
+.intel-refresh-btn{font-size:10px;color:#4b5563;background:none;border:none;cursor:pointer;font-family:inherit;padding:2px 6px;border-radius:6px;transition:.2s}
+.intel-refresh-btn:hover{color:var(--gold);background:rgba(201,168,76,.08)}
+.intel-narrative{font-size:13.5px;line-height:1.65;color:#d1d5db;font-weight:400;margin-bottom:14px;min-height:60px}
+.intel-narrative strong{color:#fff;font-weight:700}
+.intel-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.intel-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;line-height:1}
+.intel-chip.pos{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.intel-chip.neg{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.intel-chip.warn{background:rgba(245,200,66,.1);color:var(--gold-light);border:1px solid rgba(245,200,66,.2)}
+.intel-chip.info{background:rgba(96,165,250,.1);color:#93c5fd;border:1px solid rgba(96,165,250,.2)}
+.intel-skeleton{display:flex;flex-direction:column;gap:8px}
+.intel-skel-line{height:12px;background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);background-size:200% 100%;border-radius:6px;animation:shimmer 1.5s infinite}
+.intel-skel-line.w80{width:80%}.intel-skel-line.w60{width:60%}.intel-skel-line.w90{width:90%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── PREDICCIÓN FIN DE MES ── */
+.pred-card{background:linear-gradient(135deg,#0d0d0d 0%,#141414 100%);border:1px solid #222;border-radius:var(--r);padding:16px;margin-bottom:12px}
+.pred-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pred-title{font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.8px}
+.pred-days{font-size:11px;color:#4b5563;font-weight:600}
+.pred-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.pred-col{background:#111;border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #1e1e1e}
+.pred-col-label{font-size:9px;color:#4b5563;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.pred-col-val{font-size:15px;font-weight:800;letter-spacing:-.5px}
+.pred-col-val.pos{color:#4ade80}.pred-col-val.neg{color:#f87171}.pred-col-val.neutral{color:#d1d5db}
+.pred-bar-wrap{margin-top:4px}
+.pred-bar-label{display:flex;justify-content:space-between;font-size:10px;color:#6b7280;margin-bottom:4px}
+.pred-bar-track{height:4px;background:#1e1e1e;border-radius:3px;overflow:hidden}
+.pred-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.pred-bar-fill.safe{background:linear-gradient(90deg,#4ade80,#22c55e)}
+.pred-bar-fill.warn{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+.pred-bar-fill.danger{background:linear-gradient(90deg,#ef4444,#f87171)}
+.pred-sim-btn{width:100%;margin-top:10px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-family:inherit;font-size:12px;font-weight:700;padding:9px;border-radius:10px;cursor:pointer;transition:.2s}
+.pred-sim-btn:hover{background:rgba(201,168,76,.15)}
+
+/* ── QUICK ACTIONS ROW ── */
+.quick-actions{display:flex;gap:8px;margin-bottom:12px}
+.quick-action-btn{flex:1;background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:11px 8px;text-align:center;cursor:pointer;transition:.2s;font-family:inherit}
+.quick-action-btn:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.04)}
+.qa-icon{font-size:18px;margin-bottom:4px}
+.qa-label{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── MODAL COMPARTIDO (simulador + informe) ── */
+.full-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;align-items:flex-end;padding:0;opacity:0;pointer-events:none;transition:opacity .25s}
+.full-modal-overlay.open{opacity:1;pointer-events:all}
+.full-modal{background:#0d0d0d;border:1px solid #222;border-radius:22px 22px 0 0;padding:20px 16px 36px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(40px);transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.full-modal-overlay.open .full-modal{transform:translateY(0)}
+.fm-handle{width:36px;height:3px;background:#333;border-radius:3px;margin:0 auto 18px}
+.fm-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px}
+.fm-sub{font-size:12px;color:#6b7280;margin-bottom:20px}
+.fm-close{position:absolute;top:16px;right:16px;background:#1a1a1a;border:none;color:#9ca3af;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit}
+
+/* ── SIMULADOR ── */
+.sim-group{margin-bottom:18px}
+.sim-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:8px}
+.sim-label span{color:#fff;font-size:14px;font-weight:800}
+.sim-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold) var(--pct,0%),#1e1e1e var(--pct,0%));outline:none;cursor:pointer}
+.sim-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.5);cursor:pointer}
+.sim-results{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.sim-result-card{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:12px}
+.sim-result-label{font-size:10px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.sim-result-val{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.sim-result-val.pos{color:#4ade80}.sim-result-val.neg{color:#f87171}.sim-result-val.warn{color:var(--gold-light)}
+.sim-result-sub{font-size:10px;color:#4b5563;margin-top:2px}
+.sim-chart-bar{height:6px;background:#1e1e1e;border-radius:3px;margin-top:10px;overflow:hidden}
+.sim-chart-fill{height:100%;border-radius:3px;transition:width .4s ease;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+.sim-alert{font-size:12px;padding:10px 12px;border-radius:10px;margin-top:10px;font-weight:600;line-height:1.5}
+.sim-alert.good{background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.15)}
+.sim-alert.bad{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.15)}
+.sim-alert.ok{background:rgba(245,200,66,.08);color:var(--gold-light);border:1px solid rgba(245,200,66,.15)}
+
+/* ── INFORME SEMANAL ── */
+.report-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:12px}
+.report-spinner{width:28px;height:28px;border:2px solid #222;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+.report-loading-text{font-size:13px;color:#6b7280;font-weight:600}
+.report-section{margin-bottom:20px}
+.report-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.report-section-title.green{color:#4ade80}.report-section-title.warn{color:var(--gold-light)}.report-section-title.blue{color:#93c5fd}
+.report-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:13px;line-height:1.5;color:#d1d5db}
+.report-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.report-dot.green{background:#4ade80}.report-dot.warn{background:var(--gold-light)}.report-dot.blue{background:#93c5fd}
+.report-divider{height:1px;background:#1a1a1a;margin:16px 0}
+.report-cta{width:100%;background:var(--gold);color:#000;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px}
+
 .health-card{background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 100%);border-radius:var(--r);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid #2a2a2a}
 .health-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,168,76,.12) 0%,transparent 70%);pointer-events:none}
 .health-label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
@@ -1112,6 +1202,22 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
       <!-- INICIO -->
       <div class="sec on" id="sec-inicio">
 
+        <!-- CENTRO DE INTELIGENCIA FINANCIERA -->
+        <div class="intel-center" id="intel-center">
+          <div class="intel-center-head">
+            <div class="intel-badge"><div class="intel-badge-dot"></div>Centro de Inteligencia Financiera</div>
+            <button class="intel-refresh-btn" id="intel-refresh-btn" onclick="renderIntelCenter(true)">↻ Actualizar</button>
+          </div>
+          <div id="intel-narrative" class="intel-narrative">
+            <div class="intel-skeleton">
+              <div class="intel-skel-line w90"></div>
+              <div class="intel-skel-line w80"></div>
+              <div class="intel-skel-line w60"></div>
+            </div>
+          </div>
+          <div id="intel-chips" class="intel-chips"></div>
+        </div>
+
         <!-- Streak bar -->
         <div class="streak-bar" id="streak-bar" style="display:none">
           <div class="streak-fire">🔥</div>
@@ -1188,6 +1294,44 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,s
             </div>
           </div>
           <div class="health-bars" id="health-bars"></div>
+        </div>
+
+        <!-- PREDICCIÓN FIN DE MES -->
+        <div class="pred-card" id="pred-card">
+          <div class="pred-head">
+            <div class="pred-title">Predicción fin de mes</div>
+            <div class="pred-days" id="pred-days-left">— días</div>
+          </div>
+          <div class="pred-cols">
+            <div class="pred-col">
+              <div class="pred-col-label">Gastos previstos</div>
+              <div class="pred-col-val neg" id="pred-gastos">— €</div>
+            </div>
+            <div class="pred-col">
+              <div class="pred-col-label">Ahorro previsto</div>
+              <div class="pred-col-val" id="pred-ahorro">— €</div>
+            </div>
+            <div class="pred-col">
+              <div class="pred-col-label">Disponible</div>
+              <div class="pred-col-val neutral" id="pred-disp">— €</div>
+            </div>
+          </div>
+          <div class="pred-bar-wrap">
+            <div class="pred-bar-label"><span>Gasto del mes</span><span id="pred-bar-pct">0%</span></div>
+            <div class="pred-bar-track"><div class="pred-bar-fill safe" id="pred-bar-fill" style="width:0%"></div></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="pred-sim-btn" onclick="openSimulator()">Simulador financiero →</button>
+            <button class="pred-sim-btn" style="flex:0 0 auto;padding:9px 14px" onclick="openWeeklyReport()">Informe semanal</button>
+          </div>
+        </div>
+
+        <!-- ACCIONES RÁPIDAS -->
+        <div class="quick-actions">
+          <div class="quick-action-btn" onclick="openAddModal()"><div class="qa-icon">+</div><div class="qa-label">Añadir</div></div>
+          <div class="quick-action-btn" onclick="openSimulator()"><div class="qa-icon">🎛</div><div class="qa-label">Simular</div></div>
+          <div class="quick-action-btn" onclick="openWeeklyReport()"><div class="qa-icon">📋</div><div class="qa-label">Informe</div></div>
+          <div class="quick-action-btn" onclick="goTo('asesor',document.querySelectorAll('.nav-btn')[1])"><div class="qa-icon">💬</div><div class="qa-label">Asesor</div></div>
         </div>
 
         <!-- Categorías -->
@@ -2300,6 +2444,8 @@ function initDashboard(){
   document.getElementById('prof-plan-chip').className = 'plan-chip ' + planInfo.chipClass
 
   renderMonthStats()
+  renderEndOfMonthPred()
+  renderIntelCenter()
 
   // Mensaje inicio inteligente con datos reales
   const gastosTx = transactions.filter(t=>t.type==='gasto')
@@ -3286,6 +3432,8 @@ async function saveTransaction(){
   renderMoneyHero()
   renderMonthStats()
   renderAutoInsights()
+  renderEndOfMonthPred()
+  renderIntelCenter()
   checkAchievements()
   showToast('Movimiento guardado')
   // Radiografía WOW: aparece la primera vez que el usuario llega a 3 movimientos
@@ -4191,6 +4339,8 @@ async function deleteTransaction(id){
   renderMoneyHero()
   renderMonthStats()
   renderAutoInsights()
+  renderEndOfMonthPred()
+  renderIntelCenter()
   showToast('Movimiento eliminado')
 }
 
@@ -4216,6 +4366,304 @@ function getNextFiscalDeadline(){
   }
   return 'Modelo 303 Q4 · 20 enero ' + (y+1)
 }
+
+// ─── CENTRO DE INTELIGENCIA FINANCIERA ───────────────────
+async function renderIntelCenter(force=false){
+  const narEl   = document.getElementById('intel-narrative')
+  const chipsEl = document.getElementById('intel-chips')
+  if(!narEl) return
+
+  const now   = new Date()
+  const dayN  = now.getDate()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
+  const isCur = t => {
+    const d = t.created_at?.toDate ? t.created_at.toDate() : new Date(t.id||0)
+    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth()
+  }
+  const thisMo   = transactions.filter(isCur)
+  const gastos   = thisMo.filter(t=>t.type==='gasto')
+  const ingresos = thisMo.filter(t=>t.type==='ingreso')
+  const totalG   = gastos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalI   = ingresos.reduce((s,t)=>s+parseFloat(t.amount),0)
+  const income   = user?.income || totalI || 0
+
+  if(transactions.length < 2){
+    narEl.innerHTML = '<span style="color:#4b5563">Añade al menos 2 movimientos y Pecunia generará un análisis financiero personalizado de forma automática.</span>'
+    chipsEl.innerHTML = ''
+    return
+  }
+
+  // cache key: changes when tx count or total changes
+  const cacheKey = `intel_${user?.id}_${transactions.length}_${Math.round(totalG)}_${Math.round(totalI)}`
+  if(!force){
+    const cached = localStorage.getItem(cacheKey)
+    if(cached){
+      const { narrative, chips } = JSON.parse(cached)
+      narEl.innerHTML = narrative
+      chipsEl.innerHTML = chips
+      return
+    }
+  }
+
+  // show skeleton while loading
+  narEl.innerHTML = `<div class="intel-skeleton"><div class="intel-skel-line w90"></div><div class="intel-skel-line w80"></div><div class="intel-skel-line w60"></div></div>`
+  chipsEl.innerHTML = ''
+  document.getElementById('intel-refresh-btn').textContent = '...'
+
+  // build chips synchronously (fast, no AI)
+  const catTotals = {}
+  gastos.forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const sorted   = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])
+  const topCat   = sorted[0]
+  const ahorro   = income - totalG
+  const ahorroR  = income>0 ? Math.round((ahorro/income)*100) : 0
+  const ratio    = dayN/daysInMonth
+  const proyG    = ratio>0.05 ? Math.round(totalG/ratio) : totalG
+  const ahorroFin = income - proyG
+  const riesgo   = proyG > income
+
+  const chipsData = []
+  if(topCat) chipsData.push({ t:'warn', label:`Mayor gasto: ${topCat[0]} ${topCat[1].toLocaleString('es-ES')}€` })
+  chipsData.push({ t: ahorro>=0?'pos':'neg', label:`Ahorro estimado: ${ahorro.toLocaleString('es-ES')}€` })
+  if(riesgo) chipsData.push({ t:'neg', label:'Riesgo: gastos > ingresos' })
+  else chipsData.push({ t:'pos', label:`Fin de mes: +${ahorroFin.toLocaleString('es-ES')}€` })
+  if(ahorroR>=20) chipsData.push({ t:'pos', label:`Tasa de ahorro: ${ahorroR}%` })
+  else if(income>0) chipsData.push({ t:'warn', label:`Ahorro: ${ahorroR}% (objetivo 20%)` })
+
+  const chipsHTML = chipsData.map(c=>`<span class="intel-chip ${c.t}">${c.label}</span>`).join('')
+  chipsEl.innerHTML = chipsHTML
+
+  // AI narrative
+  try{
+    const subs   = detectSubscriptions()
+    const subsInfo = subs.length>0 ? `${subs.length} suscripciones detectadas (${subs.reduce((s,x)=>s+x.total,0)}€/mes total).` : ''
+    const prompt = `Eres Pecunia, asesora financiera personal. Genera un análisis financiero breve (3-4 frases) y natural para ${user?.name?.split(' ')[0]||'el usuario'}.
+Datos este mes: ingresos ${totalI.toLocaleString('es-ES')}€ registrados, gastos ${totalG.toLocaleString('es-ES')}€, ingreso mensual declarado ${income.toLocaleString('es-ES')}€/mes.
+Mayor categoría de gasto: ${topCat?`${topCat[0]} (${topCat[1].toLocaleString('es-ES')}€)`:'sin datos'}.
+Proyección fin de mes: gastos estimados ${proyG.toLocaleString('es-ES')}€, ahorro estimado ${ahorroFin.toLocaleString('es-ES')}€.
+${subsInfo}
+Día ${dayN} de ${daysInMonth}.
+Escribe en segunda persona, tono profesional pero cercano. Sin emojis. Sin asteriscos ni listas. Solo texto fluido. Máximo 4 frases.`
+
+    const res = await puter.ai.chat(prompt, { model:'gpt-4o-mini' })
+    const narrative = res?.message?.content || res?.text || String(res)
+    const narrativeHTML = narrative.trim()
+    narEl.innerHTML = narrativeHTML
+
+    localStorage.setItem(cacheKey, JSON.stringify({ narrative: narrativeHTML, chips: chipsHTML }))
+  } catch(e){
+    // fallback: rule-based narrative
+    const fallback = riesgo
+      ? `Este mes llevas <strong>${totalG.toLocaleString('es-ES')} €</strong> en gastos y la proyección indica que podrías superar tus ingresos. Tu mayor gasto es <strong>${topCat?topCat[0]:'sin categoría'}</strong>. Revisa los gastos variables cuanto antes para reconducir la situación.`
+      : `Llevas <strong>${totalG.toLocaleString('es-ES')} €</strong> gastados este mes y tu proyección apunta a terminar con un ahorro de <strong>${ahorroFin.toLocaleString('es-ES')} €</strong>. ${topCat?`El área de <strong>${topCat[0]}</strong> concentra el mayor gasto. `:''}${ahorroR>=20?'Estás por encima del 20% de ahorro recomendado.':'Optimizando gastos variables podrías mejorar tu tasa de ahorro.'}`
+    narEl.innerHTML = fallback
+    localStorage.setItem(cacheKey, JSON.stringify({ narrative: fallback, chips: chipsHTML }))
+  }
+  document.getElementById('intel-refresh-btn').textContent = '↻ Actualizar'
+}
+
+// ─── PREDICCIÓN FIN DE MES ────────────────────────────────
+function renderEndOfMonthPred(){
+  const now   = new Date()
+  const dayN  = now.getDate()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
+  const daysLeft = daysInMonth - dayN
+
+  document.getElementById('pred-days-left').textContent = `Quedan ${daysLeft} días`
+
+  const isCur = t => {
+    const d = t.created_at?.toDate ? t.created_at.toDate() : new Date(t.id||0)
+    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth()
+  }
+  const thisMo   = transactions.filter(isCur)
+  const totalG   = thisMo.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const totalI   = thisMo.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const income   = user?.income || totalI || 0
+  const ratio    = dayN / daysInMonth
+
+  const proyG    = ratio > 0.04 ? Math.round(totalG / ratio) : totalG
+  const proyI    = income || (ratio > 0.04 ? Math.round(totalI / ratio) : totalI)
+  const proyAhorro = proyI - proyG
+  const dispFin  = proyAhorro
+
+  const gastoPct = proyI > 0 ? Math.min(Math.round((proyG/proyI)*100), 100) : 0
+
+  const gastosEl = document.getElementById('pred-gastos')
+  const ahorroEl = document.getElementById('pred-ahorro')
+  const dispEl   = document.getElementById('pred-disp')
+  const barFill  = document.getElementById('pred-bar-fill')
+  const barPct   = document.getElementById('pred-bar-pct')
+
+  if(gastosEl) gastosEl.textContent = proyG.toLocaleString('es-ES')+'€'
+  if(ahorroEl){
+    ahorroEl.textContent = proyAhorro.toLocaleString('es-ES')+'€'
+    ahorroEl.className = 'pred-col-val '+(proyAhorro>=0?'pos':'neg')
+  }
+  if(dispEl){
+    dispEl.textContent = dispFin.toLocaleString('es-ES')+'€'
+    dispEl.className = 'pred-col-val '+(dispFin>=0?'pos':'neg')
+  }
+  if(barPct) barPct.textContent = gastoPct+'%'
+  if(barFill){
+    barFill.style.width = gastoPct+'%'
+    barFill.className = 'pred-bar-fill '+(gastoPct<70?'safe':gastoPct<90?'warn':'danger')
+  }
+}
+
+// ─── SIMULADOR FINANCIERO ─────────────────────────────────
+function openSimulator(){
+  // pre-fill with user data
+  const inc = user?.income || 0
+  const exp = user?.expenses || 0
+  const incEl = document.getElementById('sim-inc')
+  const expEl = document.getElementById('sim-exp')
+  if(incEl){ incEl.value = inc; incEl.style.setProperty('--pct', Math.round((inc/10000)*100)+'%') }
+  if(expEl){ expEl.value = exp; expEl.style.setProperty('--pct', Math.round((exp/10000)*100)+'%') }
+  document.getElementById('sim-overlay').classList.add('open')
+  calcSimulator()
+}
+function closeSimulator(){ document.getElementById('sim-overlay').classList.remove('open') }
+
+function calcSimulator(){
+  const inc  = parseFloat(document.getElementById('sim-inc').value)||0
+  const exp  = parseFloat(document.getElementById('sim-exp').value)||0
+  const goal = parseFloat(document.getElementById('sim-goal').value)||0
+
+  // update slider fill
+  document.getElementById('sim-inc').style.setProperty('--pct', Math.round((inc/10000)*100)+'%')
+  document.getElementById('sim-exp').style.setProperty('--pct', Math.round((exp/10000)*100)+'%')
+  document.getElementById('sim-goal').style.setProperty('--pct', Math.round((goal/100000)*100)+'%')
+
+  document.getElementById('sim-inc-val').textContent  = inc.toLocaleString('es-ES')+'€'
+  document.getElementById('sim-exp-val').textContent  = exp.toLocaleString('es-ES')+'€'
+  document.getElementById('sim-goal-val').textContent = goal.toLocaleString('es-ES')+'€'
+
+  const monthly = inc - exp
+  const annual  = monthly * 12
+  const ratio   = inc>0 ? Math.round((monthly/inc)*100) : 0
+  const emergency = exp * 6
+  const monthsToEmergency = monthly>0 ? Math.ceil(emergency/monthly) : null
+  const monthsToGoal = monthly>0 && goal>0 ? Math.ceil(goal/monthly) : null
+
+  const mEl = document.getElementById('sim-r-monthly')
+  if(mEl){ mEl.textContent = monthly.toLocaleString('es-ES')+'€'; mEl.className='sim-result-val '+(monthly>=0?'pos':'neg') }
+  const aEl = document.getElementById('sim-r-annual')
+  if(aEl){ aEl.textContent = annual.toLocaleString('es-ES')+'€'; aEl.className='sim-result-val '+(annual>=0?'pos':'neg') }
+  const rEl = document.getElementById('sim-r-ratio')
+  if(rEl){ rEl.textContent = ratio+'%'; rEl.className='sim-result-val '+(ratio>=20?'pos':ratio>=10?'warn':'neg') }
+  const eEl = document.getElementById('sim-r-emergency')
+  if(eEl){ eEl.textContent = monthsToEmergency!=null ? monthsToEmergency+' meses' : '—'; eEl.className='sim-result-val '+(monthsToEmergency!=null&&monthsToEmergency<=12?'pos':'warn') }
+
+  const fill = document.getElementById('sim-chart-fill')
+  if(fill) fill.style.width = Math.min(Math.max(ratio,0),100)+'%'
+
+  // monthly savings projected to 12/24 months
+  document.getElementById('sim-12m').textContent = (monthly*12).toLocaleString('es-ES')+'€'
+  document.getElementById('sim-24m').textContent = (monthly*24).toLocaleString('es-ES')+'€'
+  document.getElementById('sim-months').textContent = monthsToGoal!=null ? monthsToGoal+' m' : '—'
+
+  const alertEl = document.getElementById('sim-alert')
+  if(alertEl){
+    if(monthly<0){
+      alertEl.style.display='block'; alertEl.className='sim-alert bad'
+      alertEl.textContent=`Con estos números gastas ${Math.abs(monthly).toLocaleString('es-ES')} € más de lo que ingresas cada mes. Necesitas reducir gastos o aumentar ingresos.`
+    } else if(ratio>=20){
+      alertEl.style.display='block'; alertEl.className='sim-alert good'
+      alertEl.textContent=`Excelente — ahorras el ${ratio}% de tus ingresos. Estás por encima del 20% recomendado.${goal>0&&monthsToGoal?` Alcanzarás tu objetivo en ${monthsToGoal} meses.`:''}`
+    } else if(ratio>0){
+      alertEl.style.display='block'; alertEl.className='sim-alert ok'
+      alertEl.textContent=`Ahorras el ${ratio}%. Para llegar al 20% necesitas reducir gastos en ${Math.round(inc*0.2-(inc-exp)).toLocaleString('es-ES')} € al mes.`
+    } else {
+      alertEl.style.display='none'
+    }
+  }
+}
+
+// ─── INFORME SEMANAL ─────────────────────────────────────
+async function openWeeklyReport(){
+  document.getElementById('report-overlay').classList.add('open')
+  const now  = new Date()
+  const weekAgo = new Date(now - 7*24*3600*1000)
+  const fmt  = d => d.toLocaleDateString('es-ES',{day:'numeric',month:'short'})
+  document.getElementById('report-date-range').textContent = `${fmt(weekAgo)} — ${fmt(now)}`
+
+  const bodyEl = document.getElementById('report-body')
+  bodyEl.innerHTML = `<div class="report-loading"><div class="report-spinner"></div><div class="report-loading-text">Pecunia está analizando tu semana...</div></div>`
+
+  const isThisWeek = t => {
+    const d = t.created_at?.toDate ? t.created_at.toDate() : new Date(t.id||0)
+    return d >= weekAgo
+  }
+  const weekTx   = transactions.filter(isThisWeek)
+  const weekG    = weekTx.filter(t=>t.type==='gasto').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const weekI    = weekTx.filter(t=>t.type==='ingreso').reduce((s,t)=>s+parseFloat(t.amount),0)
+  const income   = user?.income || 0
+
+  if(weekTx.length === 0){
+    bodyEl.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#4b5563;font-size:13px;line-height:1.7">No hay movimientos registrados esta semana.<br>Añade tus gastos e ingresos para recibir el informe.</div>`
+    return
+  }
+
+  const catTotals = {}
+  weekTx.filter(t=>t.type==='gasto').forEach(t=>{ catTotals[t.cat]=(catTotals[t.cat]||0)+parseFloat(t.amount) })
+  const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0]
+
+  const prompt = `Eres Pecunia, asesora financiera personal. Genera un informe financiero semanal para ${user?.name?.split(' ')[0]||'el usuario'}.
+
+Datos de la semana (${fmt(weekAgo)} al ${fmt(now)}):
+- Gastos: ${weekG.toLocaleString('es-ES')} € en ${weekTx.filter(t=>t.type==='gasto').length} movimientos
+- Ingresos registrados: ${weekI.toLocaleString('es-ES')} €
+- Mayor categoría de gasto: ${topCat?`${topCat[0]} (${topCat[1].toLocaleString('es-ES')}€)`:'sin datos'}
+- Ingreso mensual declarado: ${income.toLocaleString('es-ES')} €/mes
+- Gasto semanal medio objetivo (income/4): ${income>0?Math.round(income/4).toLocaleString('es-ES'):'-'} €
+
+Responde EXCLUSIVAMENTE en este formato JSON (sin explicaciones, solo el JSON):
+{
+  "bien": ["punto positivo 1", "punto positivo 2"],
+  "mejorar": ["punto a mejorar 1", "punto a mejorar 2"],
+  "recomendaciones": ["recomendación concreta 1", "recomendación concreta 2"],
+  "resumen": "Una frase resumiendo la semana."
+}`
+
+  try{
+    const res  = await puter.ai.chat(prompt, { model:'gpt-4o-mini' })
+    const text = (res?.message?.content || res?.text || String(res)).trim()
+    const json = JSON.parse(text.match(/\{[\s\S]*\}/)?.[0] || text)
+
+    const renderItems = (items, color) => items.map(i=>`
+      <div class="report-item">
+        <div class="report-dot ${color}"></div>
+        <div>${i}</div>
+      </div>`).join('')
+
+    bodyEl.innerHTML = `
+      <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#d1d5db;line-height:1.6;font-style:italic">"${json.resumen}"</div>
+      <div class="report-section">
+        <div class="report-section-title green">Lo que fue bien</div>
+        ${renderItems(json.bien||[], 'green')}
+      </div>
+      <div class="report-divider"></div>
+      <div class="report-section">
+        <div class="report-section-title warn">Áreas a mejorar</div>
+        ${renderItems(json.mejorar||[], 'warn')}
+      </div>
+      <div class="report-divider"></div>
+      <div class="report-section">
+        <div class="report-section-title blue">Recomendaciones</div>
+        ${renderItems(json.recomendaciones||[], 'blue')}
+      </div>
+      <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:12px;margin-top:4px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><div style="font-size:9px;color:#4b5563;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Gastado</div><div style="font-size:16px;font-weight:800;color:#f87171">${weekG.toLocaleString('es-ES')} €</div></div>
+          <div><div style="font-size:9px;color:#4b5563;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Ingresado</div><div style="font-size:16px;font-weight:800;color:#4ade80">${weekI.toLocaleString('es-ES')} €</div></div>
+        </div>
+      </div>
+      <button class="report-cta" onclick="closeWeeklyReport();goTo('asesor',document.querySelectorAll('.nav-btn')[1])">Hablar con Pecunia sobre este informe</button>`
+  } catch(e){
+    bodyEl.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#4b5563;font-size:13px;line-height:1.7">No se pudo generar el informe.<br>Comprueba tu conexión e inténtalo de nuevo.</div>`
+  }
+}
+function closeWeeklyReport(){ document.getElementById('report-overlay').classList.remove('open') }
 
 // ─── AUTO-INSIGHTS ENGINE ────────────────────────────────
 function renderAutoInsights(){
@@ -4714,5 +5162,86 @@ setTimeout(()=>{
   if(!_appReady){ _appReady = true; hideSplash() }
 }, 4000)
 </script>
+<!-- ── SIMULADOR FINANCIERO ── -->
+<div class="full-modal-overlay" id="sim-overlay" onclick="if(event.target===this)closeSimulator()">
+  <div class="full-modal" style="position:relative">
+    <div class="fm-handle"></div>
+    <button class="fm-close" onclick="closeSimulator()">✕</button>
+    <div class="fm-title">Simulador financiero</div>
+    <div class="fm-sub">Ajusta los valores y ve cómo cambia tu situación al instante</div>
+
+    <div class="sim-group">
+      <div class="sim-label">Ingresos mensuales <span id="sim-inc-val">0 €</span></div>
+      <input type="range" class="sim-slider" id="sim-inc" min="0" max="10000" step="50" value="0" oninput="calcSimulator()">
+    </div>
+    <div class="sim-group">
+      <div class="sim-label">Gastos fijos mensuales <span id="sim-exp-val">0 €</span></div>
+      <input type="range" class="sim-slider" id="sim-exp" min="0" max="10000" step="50" value="0" oninput="calcSimulator()">
+    </div>
+    <div class="sim-group">
+      <div class="sim-label">Objetivo de ahorro <span id="sim-goal-val">0 €</span></div>
+      <input type="range" class="sim-slider" id="sim-goal" min="0" max="100000" step="500" value="0" oninput="calcSimulator()">
+    </div>
+
+    <div class="sim-results">
+      <div class="sim-result-card">
+        <div class="sim-result-label">Ahorro mensual</div>
+        <div class="sim-result-val" id="sim-r-monthly">—</div>
+        <div class="sim-result-sub" id="sim-r-monthly-sub"></div>
+      </div>
+      <div class="sim-result-card">
+        <div class="sim-result-label">Ahorro anual</div>
+        <div class="sim-result-val" id="sim-r-annual">—</div>
+        <div class="sim-result-sub" id="sim-r-annual-sub"></div>
+      </div>
+      <div class="sim-result-card">
+        <div class="sim-result-label">Ratio de ahorro</div>
+        <div class="sim-result-val" id="sim-r-ratio">—</div>
+        <div class="sim-result-sub">Recomendado: 20%</div>
+      </div>
+      <div class="sim-result-card">
+        <div class="sim-result-label">Fondo emergencia</div>
+        <div class="sim-result-val" id="sim-r-emergency">—</div>
+        <div class="sim-result-sub" id="sim-r-emergency-sub">6 meses de gastos</div>
+      </div>
+    </div>
+    <div class="sim-chart-bar"><div class="sim-chart-fill" id="sim-chart-fill" style="width:0%"></div></div>
+    <div id="sim-alert" class="sim-alert ok" style="display:none"></div>
+
+    <div style="margin-top:20px">
+      <div style="font-size:10px;font-weight:800;color:#4b5563;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Para alcanzar tu objetivo en…</div>
+      <div style="display:flex;gap:8px">
+        <div class="sim-result-card" style="flex:1;text-align:center">
+          <div class="sim-result-label">12 meses</div>
+          <div class="sim-result-val neutral" id="sim-12m">—</div>
+        </div>
+        <div class="sim-result-card" style="flex:1;text-align:center">
+          <div class="sim-result-label">24 meses</div>
+          <div class="sim-result-val neutral" id="sim-24m">—</div>
+        </div>
+        <div class="sim-result-card" style="flex:1;text-align:center">
+          <div class="sim-result-label">Meses necesarios</div>
+          <div class="sim-result-val warn" id="sim-months">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── INFORME SEMANAL ── -->
+<div class="full-modal-overlay" id="report-overlay" onclick="if(event.target===this)closeWeeklyReport()">
+  <div class="full-modal" style="position:relative">
+    <div class="fm-handle"></div>
+    <button class="fm-close" onclick="closeWeeklyReport()">✕</button>
+    <div class="fm-title">Informe semanal</div>
+    <div class="fm-sub" id="report-date-range">Generando análisis...</div>
+    <div id="report-body">
+      <div class="report-loading">
+        <div class="report-spinner"></div>
+        <div class="report-loading-text">Pecunia está analizando tu semana...</div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
